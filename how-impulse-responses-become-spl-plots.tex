@@ -1,102 +1,103 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage[margin=2.5cm]{geometry}
-\usepackage{graphicx}
-\usepackage{enumitem}
-\usepackage{titlesec}
-\usepackage{amsmath}
-\usepackage{hyperref}
-
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
-\usepackage[helvet]{sfmath}  % matches math font with Helvetica
+\usepackage[helvet]{sfmath}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{hyperref}
 
-\title{\textbf{How Impulse Responses Become SPL Plots --- The Good, the Bad, and the Ugly}\\[0.5em]
-\large A practical and occasionally irreverent guide to turning time-domain measurements into meaningful frequency responses.}
-\author{}
-\date{}
+\title{How Impulse Responses Become Sound~Pressure~Level~(SPL) Plots:\\[0.7em]\textit{The Good, the Bad, and the Ugly}}
+\author{Matthias S.~Brennwald}
+\date{Document version \today}
 
 \begin{document}
 \maketitle
 
-\section{Introduction --- Why We Do This in the First Place}
-
-Every loudspeaker designer or acoustics tinkerer eventually wants to know:  
-\emph{how loud is this thing at each frequency?}  
-
-We call that the \textbf{SPL frequency response}, and while we could find it by playing one sine wave at a time, there’s a faster and more elegant trick: use a signal that contains \emph{all frequencies at once}, measure how the speaker reacts, and decode the result mathematically. That’s where the impulse response comes in.
-
-Impulse-response measurements promise to reveal the full frequency behaviour of a loudspeaker from a single recording. The beauty is that the same data also contains information about reflections, resonances, and timing. The danger is that it’s easy to massage that data into something prettier (and less truthful) than reality.
-
-\vspace{1em}
-\noindent\textbf{Figure 1:} Example impulse response of a loudspeaker, showing the main arrival and reflections.
-
-\section{The Impulse Response --- The Speaker’s Fingerprint}
-
-An \textbf{impulse} is, in principle, an infinitely short sound burst containing all audible frequencies [THIS IS NOT VERY INTUITIVE: WHY WOULD AN IMPULSE "CONTAIN ALL FREQUENCIES", AT THE SAME AMPLITUDE AND ZERO PHASE? --> THIS NEED SOME EXPLANATION FIRST, AND CAN THEN BE USED TO MOTIVATE THE USE OF THE IR TO CHARACTERISE THE LOUDSPEAKER]. WE COULD FEED AN ELECTRICAL IMPULSE TO THE LOUDSPEAKER AND MEASURE THE PRESSURE RESPONSE OF THE SPEAKER TO GET THE IMPULSE RESPONSE. HOWEVER, THIS USUALLY RESULS IN A POOR SIGNAL/NOISE OF THE MEASURENENT ... excite the loudspeaker with a known broadband signal—such as a swept sine or maximum-length sequence—and record the acoustic output with a measurement microphone. After some signal processing (often deconvolution, though the details don’t matter here), we obtain the \textbf{impulse response} \( h(t) \).
-
-The result of a proper measurement is a signal \( h(t) \) in units of \emph{sound pressure} (Pa), representing the loudspeaker–room system’s response to an impulse at time zero. The main sharp peak corresponds to the direct sound from the speaker. Later, smaller peaks or ripples are reflections from walls, floor, and ceiling. The impulse response is the speaker’s acoustic fingerprint: everything it does to sound, laid out in time.
-
-\vspace{1em}
-\noindent\textbf{Figure 2:} Annotated impulse response with direct sound and room reflections.
-
-\section{From Time to Frequency --- Making It Meaningful}
-
-The impulse response is intuitive to look at, but our ears and engineering specs care about frequency.  
-The \textbf{Fast Fourier Transform (FFT)} bridges the two worlds, converting \( h(t) \) into its frequency-domain counterpart \( H(f) \). The magnitude of \( H(f) \) shows how loud the loudspeaker is at each frequency, while its phase carries timing and delay information.
-
-\subsection*{Zero Padding}
-
-Before taking the FFT, engineers often \textbf{extend the impulse response with zeros}. This trick, known as \emph{zero padding}, doesn’t add information—it only increases the number of frequency bins in the FFT, yielding smoother-looking plots. It’s cosmetic, not diagnostic. Overdoing it can make a rough response appear deceptively well-behaved.
-
-\vspace{1em}
-\noindent\textbf{Figure 3:} Example of frequency response with and without zero padding.
-
-\subsection*{Scaling and Smoothing}
-
-The FFT yields relative amplitudes. To express them as \textbf{Sound Pressure Level (SPL)}, the result must be scaled using a calibrated microphone sensitivity, referenced to 20~µPa.  
-
-Because raw frequency responses are jagged, especially in reflective environments, we often apply \textbf{octave or fractional-octave smoothing}. A 1/12-octave average is common—it makes the curve easier to interpret without hiding too much detail. But smoothing can also disguise narrow resonances or dips that matter.
-
-\subsection*{Plotting and Honesty}
-
-A good SPL plot shows axes, smoothing bandwidth, and scaling. Frequency is on a logarithmic axis; SPL in decibels on a linear one. Most importantly, a frequency response should be interpreted as an \emph{approximation} of reality, shaped by the measurement method, microphone position, and room.
-
-\section{The Good --- What Gating and Windowing Are For}
-
-If the impulse response contains reflections, we can limit the analysis to a short time window around the direct sound. This \textbf{gating} (or windowing) effectively removes the reflections from the FFT, approximating what the loudspeaker would do in an anechoic chamber.  
-
-The length of the window sets the lowest frequency we can resolve: a longer window means better low-frequency precision, while a shorter one removes more reflections but blurs the bass response. Used carefully, gating is invaluable for seeing the direct-field behaviour of a loudspeaker without building a huge anechoic room.
-
-\vspace{1em}
-\noindent\textbf{Figure 4:} Gated vs. ungated frequency response.
-
-\section{The Bad --- What Happens When We Overdo It}
-
-It’s tempting to use very short windows to eliminate all visible reflections—but that comes at a price. A 5~ms window, for instance, cannot resolve anything below about 200~Hz. The result may look beautifully flat, but the low end is entirely artificial.  
-
-Common mistakes include misaligned windows (cutting off part of the direct sound), ignoring phase effects, or assuming that a gated measurement tells the whole story. “Pretty” plots are easy to make; truthful ones are harder.
-
-\section{The Ugly --- Creative Data Cleaning (a.k.a. Cheating Lightly)}
-
-At the dark end of the measurement spectrum lie techniques like \textbf{zeroing}, where the tail of the impulse response is simply cut or replaced with zeros to suppress reflections. Combined with heavy smoothing or selective averaging, this can produce an impressive-looking curve that hides resonances, ringing, or inefficiencies.  
-
-Such manipulations are easy to spot once you know what to look for—but they’re also easy to rationalize as “cleaning up the data.” They’re not. They’re rewriting history.
-
-\section{Conclusion --- Respect the Impulse}
-
-The impulse response is the most honest description of what a loudspeaker does. From it, we can derive all the frequency information we want—but only if we treat the data with respect.
+\section{Motivation: Why Frequency Response Matters}
 
 \begin{itemize}[noitemsep]
-    \item Recap: impulse $\rightarrow$ FFT $\rightarrow$ SPL $\rightarrow$ windowing $\rightarrow$ interpretation.
-    \item The tools are powerful, but easy to misuse.
-    \item SPL curves must always be presented with the necessary information on how they were determined (gating, smoothing, echoes, interpolation/zero padding, etc.).
-    \item Why honest measurement plots usually look worse --- and that’s a good thing.
-    \item In measurement, ``ugly truth'' beats ``beautiful fiction.''
-    \item Encourage curiosity: measure, question, and show your work.
+    \item The goal is to determine how loud a loudspeaker is at each frequency.
+    \item A straightforward approach is to play pure tones at different frequencies, record the sound pressure level (SPL), and connect the dots to form a curve of SPL vs.\ frequency.
+    \item This method is slow and affected by reflections and echoes, unless performed in an anechoic chamber.
+    \item A more efficient and accessible alternative relies on the \textbf{impulse response} and the \textbf{Fourier transform}.
+    \item This text is a practical and occasionally irreverent guide to turning impulse-response measurements from the time domain into meaningful SPL data in the frequency domain. It explores how an impulse response represents a loudspeaker's acoustic behaviour and how the data is processed, interpreted, and occasionally abused.
+\end{itemize}
+
+\vspace{1em}
+\noindent\textbf{Figure 1:} Measuring tone-by-tone versus using a single broadband test.
+
+\section{Time domain vs.\ frequency domain: the Fourier transform}
+
+Assume sound pressure signal evolving as function of time, \(p(t)\). The signal is recorded by a microphone and digitized by an A/D converter with a sampling rate $F_s$. Result: \(N\) discrete samples \(p_i\) at times $t_i = 0, \tau, 2\tau,\ldots, (N-1)\tau$ ($\tau = 1/F_s$).
+
+The idea of the Fourier transform is to describe time-domain data point $p_i$ ($i = 1,\ldots,N$) as a combination of sine waves, each with an amplitude \(A_k\) and phase \(\varphi_k\) at frequencies $f_k = (k-1)F_s/N$:
+
+\begin{align}
+\text{If $N$ is even:}\quad
+x_i &= \frac{A_1}{N}
+      + \frac{A_{N/2+1}}{N}(-1)^{i-1}
+      + \frac{2}{N}\sum_{k=2}^{N/2} A_k \sin\!\big(2\pi f_k t_i + \varphi_k\big) \notag\\[0.8em]
+\text{If $N$ is odd:}\quad
+x_i &= \frac{A_1}{N}
+      + \frac{2}{N}\sum_{k=2}^{(N+1)/2} 
+      A_k \sin\!\big(2\pi f_k t_i + \varphi_k\big)
+\end{align}
+
+
+
+
+Each amplitude–phase pair \((A_k,\varphi_k)\) represents one Fourier component with frequency $f_k = (k-1)F_s/N\).
+
+NOTE THAT NUMBER OF COEFFICIENTS $A_k$ AND $\varphi_k)$ SUMS UP TO $N$. IN OTHER WORDS, THE NUMBER OF DATA POINTS IN THE FREQUENCY-DOMAIN IS ALWAYS EQUAL TO THE NUMBER OF TIME-DOMAIN DATA POINTS. THE ABOVE EQUATIONS THEREFORE DESCRIBE A FULLY DETERMINED EQUATION SYSTEM. THE ($A_k$ AND $\varphi_k)$) CAN THEREFORE BE DETERMINED FROM THE MEASURED $x_i$ BY SOLVING THE EQUATION SYSTEM, USUALLY EMPLYING SUITABLE COMPUTER ALGORITHMS (FAST FOURIER TRANSFORM, FFT).
+
+NOTE THAT THE TRANSFORM ALSO WORKS BACKWARDS, FROM TIME DOMAIN TO FREQUENCY DOMAIN. GIVEN THE FREQUENCY DOMAIN DATA $(A_k,\varphi_k)$, THE CORRESONDING TIME-DOMAIN SIGNAL CAN BE DETERMINED EXACTLY FROM THE ABOVE EQUATIONS.
+
+The time domain describes how the signal evolves over time, whereas the frequency domain expresses the same information in terms of the \emph{amplitude and phase distribution} across frequencies.
+
+
+\section{How Loud Is the Loudspeaker? One Test for All Frequencies}
+
+\begin{itemize}[noitemsep]
+    \item Imagine a test signal that contains all frequencies with equal amplitude and zero phase.
+    \item Using the inverse Fourier transform, this frequency-domain description can be converted into the time domain.
+    \item The result is a very short pulse—mathematically a \textbf{Dirac delta}, or in practice a broadband \textbf{impulse}.
+    \item When such a signal drives the loudspeaker, the microphone records its acoustic output over time.
+    \item The resulting waveform, \(h(t)\), is the \textbf{impulse response}, expressed in sound pressure (Pa) as a function of time.
+    \item Each peak, dip, and reflection in \(h(t)\) corresponds to how the loudspeaker and room respond to different frequencies.
+\end{itemize}
+
+\vspace{1em}
+\noindent\textbf{Figure 3:} Ideal impulse (test signal) and measured impulse response of a loudspeaker.
+
+\section{From Impulse to Frequency --- The FFT}
+
+\begin{itemize}[noitemsep]
+    \item Applying a Fourier transform to \(h(t)\) yields \(H(f)\), the loudspeaker’s frequency response.
+    \item The magnitude of \(H(f)\) indicates the relative sound level of each frequency; the phase describes timing and coherence.
+    \item With microphone calibration, magnitudes can be expressed as sound pressure level (SPL) in decibels (re~20~µPa).
+    \item The transformation from \(h(t)\) to \(H(f)\) turns a single broadband measurement into the familiar SPL vs.\ frequency curve.
+\end{itemize}
+
+\vspace{1em}
+\noindent\textbf{Figure 4:} Impulse response and its corresponding SPL frequency response.
+
+\section{The Good, the Bad, and the Ugly (Preview)}
+
+\begin{itemize}[noitemsep]
+    \item The following sections discuss how real-world processing shapes this transformation:
+    \begin{itemize}
+        \item \textbf{The Good:} gating and windowing to suppress reflections.
+        \item \textbf{The Bad:} excessive windowing that removes low-frequency content.
+        \item \textbf{The Ugly:} manipulation of data through zeroing, smoothing, or padding.
+    \end{itemize}
+    \item Each step is an attempt to recover the true loudspeaker behaviour from a reflection-rich environment—but not all are equally honest.
 \end{itemize}
 
 \vspace{1em}
 \noindent\rule{\textwidth}{0.4pt}\\
-\textit{This document is software-agnostic. The concepts apply equally to any measurement system, from DIY setups to professional analyzers. What matters is understanding what your data really means.}
+\textit{This conceptual introduction explains how an impulse response represents a complete description of a loudspeaker’s behaviour. Later sections explore how this data is processed, interpreted, and occasionally abused.}
 
 \end{document}
