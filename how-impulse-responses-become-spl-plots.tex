@@ -27,7 +27,7 @@ Every loudspeaker designer or tinkerer wants to know how well their loudspeaker 
 
 Understanding and visualising the SPL response is central to almost every aspect of loudspeaker design and evaluation—from developing new drivers to characterising enclosures and interpreting room interactions. The goal seems simple: determine how a loudspeaker responds to different frequencies. The challenge lies in doing so accurately and efficiently, without (unintended) cheating.
 
-An intuitive approach to determine the SPL curve of a loudspeaker would be to play one sine wave with a given frequency at a time, measure the resulting sound pressure level (SPL), repeat the process at the next frequency, and plot the SPL results across frequency. However, this method is very time-consuming and works reliably only in an anechoic environment, as room reflections and echoes can severely distort the measurement. Modern techniques achieve the same result in a single measurement step: they excite the loudspeaker with a short, broadband signal and use the Fourier transform to reveal the frequency response from the measured time-domain data.
+An intuitive approach to determine the SPL curve of a loudspeaker would be to play a sine wave with a given frequency at a time, measure the resulting sound pressure level (SPL), repeat the process at the next frequency, and plot the SPL results across frequency. However, this method is very time-consuming and works reliably only in an anechoic environment, as room reflections and echoes can severely distort the measurement. Modern techniques achieve the same result in a single measurement step: they excite the loudspeaker with a short, broadband signal and use the Fourier transform to reveal the frequency response from the measured time-domain data.
 
 This document introduces the concepts that link time-domain measurements (such as impulse responses) to frequency-domain data (such as SPL curves). It aims to provide a practical, intuitive explanation of what the Fourier transform does for loudspeaker measurements—and why understanding its limitations is just as important as applying it. Later sections explore both the strengths and the pitfalls of this process: the good, the bad, and occasionally the ugly.
 
@@ -50,9 +50,9 @@ where \(M = (N - 1)/2\) if \(N\) is odd, or \(M = N/2 - 1\) if \(N\) is even.
 The discrete Fourier expansion is then written as:
 \begin{align}
 \text{For odd } N:\quad
-p_i &= A_0 + \sum_{j=1}^{M} A_j \sin\!\big(2\pi f_j t_i + \varphi_j\big), \\[6pt]
+p_i &= A_0 + \sum_{j=1}^{M} A_j \cos\!\big(2\pi f_j t_i + \varphi_j\big), \\[6pt]
 \text{For even } N:\quad
-p_i &= A_0 + \sum_{j=1}^{M} A_j \sin\!\big(2\pi f_j t_i + \varphi_j\big)
+p_i &= A_0 + \sum_{j=1}^{M} A_j \cos\!\big(2\pi f_j t_i + \varphi_j\big)
       + A_{N/2}\cos\!\big(\pi\, t_i / \tau\big).
 \end{align}
 
@@ -64,8 +64,8 @@ In other words, the time-domain data describe how the signal evolves over time, 
 
 \subsection{Periodic signals!}
 An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N\tau$.  
-This follows directly from the use of sine functions, which are themselves periodic.  
-In other words, when representing the discrete time-domain data $p_i$ as a sum of sine waves, the discrete Fourier transform assumes that this pattern repeats indefinitely for $t < 0$ and $t > T$.  
+This follows directly from the use of sinusoidal functions, which are themselves periodic.  
+In other words, when representing the discrete time-domain data $p_i$ as a sum of sinusoidal waves, the discrete Fourier transform assumes that this pattern repeats indefinitely for $t < 0$ and $t > T$.  
 However, in many practical cases the measured signal is not actually periodic—for example, the impulse response discussed in Section~\ref{sec:impulse-response}.  
 This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions.  
 In the frequency domain, that discontinuity appears as additional spectral content (spectral leakage).
@@ -76,7 +76,7 @@ In practice, most real-world signals are not composed of a finite set of perfect
 Instead, their spectral energy almost always lies between the discrete frequencies sampled by the Fourier transform.
 
 In the discrete Fourier transform, the available frequencies form a set of equally spaced bins, separated by $\Delta f = F_s/N = F_s \tau$.  
-Each bin represents one sine-wave component used to describe the signal.  
+Each bin represents one sinusoidal component used to describe the signal.  
 If a signal’s actual frequency lies between two bins, its energy cannot be captured by a single $f_j$ bin—it spreads into neighbouring bins instead.  
 This effect is known as spectral leakage.  
 While the total energy of the signal remains conserved, leakage can cause sharp spectral features to appear broadened or blurred across multiple frequency bins.
@@ -88,7 +88,7 @@ The highest resolvable frequency ($f_M = F_s \times M / N$) is determined by the
 Any analog signal components above this limit will be aliased—that is, folded back—to appear as spurious lower-frequency components in the sampled data.
 
 
-\section{The loudspeaker impulse response and its Fourier transform}
+\section{The impulse response and its Fourier transform}
 
 Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = \text{const.}$ and $\varphi_j = 0$ for all $j$ in the frequency domain.  
 When such a signal is converted from the frequency domain to the time domain, the result is a very short pulse at time $t_1$ and zero at all other times $t_{i = 2\ldots N}$—a \emph{Dirac delta}.  
