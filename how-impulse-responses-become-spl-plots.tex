@@ -11,6 +11,7 @@
 \usepackage[parfill]{parskip}
 \usepackage{siunitx}
 
+\providecommand{\seclabel}[1]{\label{sec:#1}}
 \providecommand{\secn}[1]{Sec.~\ref{sec:#1}}
 
 \title{How Loudspeaker Impulse Responses Become Sound~Pressure~Level~(SPL) Plots:\\[0.7em]\textit{The Good, the Bad, and the Ugly}}
@@ -21,7 +22,6 @@
 \maketitle
 
 \section{Introduction}
-\section*{Introduction}
 
 Every loudspeaker designer or tinkerer wants to know how well their loudspeaker performs acoustically. Does it reproduce all frequencies evenly, or does it emphasise some and hide others? The answer lies in its SPL frequency response curve, which shows how loud the speaker is at each frequency.
 
@@ -32,11 +32,11 @@ An intuitive approach to determine the SPL curve of a loudspeaker would be to pl
 This document introduces the concepts that link time-domain measurements (such as impulse responses) to frequency-domain data (such as SPL curves). It aims to provide a practical, intuitive explanation of what the Fourier transform does for loudspeaker measurements—and why understanding its limitations is just as important as applying it. Later sections explore both the strengths and the pitfalls of this process: the good, the bad, and occasionally the ugly.
 
 
-\section{Time domain vs.\ frequency domain: the Fourier transform}
+\section{Time domain vs.\ frequency domain: the Fourier transform}\seclabel{Fourier_Theory}
 
 Consider a sound pressure signal evolving as a function of time, $x(t)$. The signal is recorded by a microphone and digitized by an A/D converter with sampling rate \(F_s\). As a result, we obtain $N$ discrete samples $x_i = x(t_i)$ at times
 \[
-t_i = (i-1)\tau, \qquad \tau = \frac{1}{F_s}, \quad i = 1, 2, \ldots, N.
+t_i = (i-1) \times \tau, \qquad \tau = \frac{1}{F_s}, \quad i = 1, 2, \ldots, N.
 \]
 
 The idea of the Fourier transform is to describe each time-domain data point \(x_i\)
@@ -63,10 +63,10 @@ Note that the Fourier transform is fully reversible. Given the frequency-domain 
 In other words, the time-domain data describe how the signal evolves over time, while the frequency-domain data represent the same signal in terms of its amplitude and phase distribution across frequencies. Both domains contain precisely the same information; they are simply two equivalent representations of the very same signal.
 
 \subsection{Periodic signals!}
-An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N\tau$.  
+An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N \time \tau$.  
 This follows directly from the use of sinusoidal functions, which are themselves periodic.  
 In other words, when representing the discrete time-domain data $x_i$ as a sum of sinusoidal waves, the discrete Fourier transform assumes that this pattern repeats indefinitely for $t < 0$ and $t > T$.  
-However, in many practical cases the measured signal is not actually periodic—for example, the impulse response discussed in Section~\ref{sec:impulse-response}.  
+However, in many practical cases the measured signal is not actually periodic—for example, the impulse response discussed in \secn{impulse_response}.  
 This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions.  
 In the frequency domain, that discontinuity appears as additional spectral content (spectral leakage).
 
@@ -74,27 +74,25 @@ In the frequency domain, that discontinuity appears as additional spectral conte
 In practice, most real-world signals are not composed of a finite set of perfectly aligned frequencies $f_j$.  
 Instead, their spectral energy almost always lies between the discrete frequencies sampled by the Fourier transform.
 
-In the discrete Fourier transform, the available frequencies form equally spaced bins centered at the $f_j$, each with width $\Delta f = F_s/N = F_s \tau$.
+In the discrete Fourier transform, the available frequencies form equally spaced bins centered at the $f_j$, each with width $\Delta f = F_s/N = F_s \times \tau$.
 A signal whose frequency does not coincide with one of these discrete $f_j$ values will have its energy distributed over multiple bins, a phenomenon known as spectral leakage. While the total energy of the signal remains conserved, leakage can cause sharp spectral features to appear broadened or blurred across multiple frequency bins.
 
 Sampling also imposes two important frequency limits.  
-The lowest frequency present in the discrete Fourier transform ($f_1 = F_s/N$) is determined by the total length of the digitized signal, $T = N\tau$.  
+The lowest frequency present in the discrete Fourier transform ($f_1 = F_s/N$) is determined by the total length of the digitized signal, $T = N \times \tau$.  
 Because the bin width $\Delta f$ equals $f_1$, the signal duration also defines the frequency resolution of the time-domain data.  
 The highest resolvable frequency ($f_M = F_s \times M / N$) is determined by the sampling rate: according to the Nyquist theorem, no frequency above $F_s/2$ can be represented in the digitized data.  
-Any analog signal components above this limit will be aliased—that is, folded back—to appear as spurious lower-frequency components in the sampled data.
+Any analog signal components above this limit will be folded back (or ``aliased'') to appear as spurious lower-frequency components in the sampled data.
 
 
-\section{The impulse response and its Fourier transform}
-Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$. The DC component is $A_0 = 1$ and, for even $N$, the Nyquist component is $A_{N/2} = 1$. When such a signal is converted from the frequency domain to the time domain, the result is a very short pulse at time $t_1$ and zero at all other times $t_{i = 2\ldots N}$—a \emph{Dirac delta}.  
-In other words, an ideal Dirac pulse excites all frequencies simultaneously and with equal amplitude.
+\section{The impulse response and its Fourier transform}\seclabel{impulse_response}
+Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$. The DC component is $A_0 = 1$ and, for even $N$, the Nyquist component is $A_{N/2} = 1$. When such a signal is converted from the frequency domain to the time domain, the result is a very short pulse at time $t_1$ and zero at all other times $t_{i = 2\ldots N}$ -- a Dirac delta. In other words, an ideal Dirac pulse excites all frequencies simultaneously, with equal amplitude and phase.
 
 If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time.  
 The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time.  
-Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies—revealing its deviation from a perfectly flat, ideal response.
+Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies, revealing its deviation from a perfectly flat response.
 
 The impulse response thus captures the complete acoustic behaviour of the loudspeaker (and the surrounding room): every resonance, reflection, and delay leaves its fingerprint in $h(t)$.  
-Early peaks correspond to the direct sound from the driver, later ripples often indicate cabinet or cone resonances, and delayed arrivals show reflections from walls or nearby surfaces.  
-Taken together, these features form the bridge between the time and frequency domains.
+Early peaks correspond to the direct sound from the driver, later ripples often indicate cabinet or cone resonances, and delayed arrivals show reflections from walls or nearby objects.
 
 
 
@@ -137,7 +135,7 @@ SOMEWHERE MENTION RMS AND DECIBEL CONVERSION: $SPL_j = 20 \times \log_{10} \!\le
 \section{Dealing with reality: The Good, the Bad, and the Ugly}
 DISCUSS THE METHODS INTRODUCED IN PREVIOUS SECTIONS, DEMONSTRATE THEIR (AB)USE AND EFFECTS 
 
-The relationships described in \secn{FourierTheory} define the discrete time and frequency grid on which the Fourier transform operates. Real-world signals rarely align perfectly with this grid, which is why techniques to reduce leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
+The relationships described in \secn{Fourier_Theory} define the discrete time and frequency grid on which the Fourier transform operates. Real-world signals rarely align perfectly with this grid, which is why techniques to reduce leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \begin{itemize}[noitemsep]
     \item The following sections discuss how real-world processing shapes this transformation:
