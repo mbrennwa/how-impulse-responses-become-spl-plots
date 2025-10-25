@@ -34,12 +34,12 @@ This document introduces the concepts that link time-domain measurements (such a
 
 \section{Time domain vs.\ frequency domain: the Fourier transform}
 
-Assume a sound pressure signal evolving as a function of time, $p(t)$. The signal is recorded by a microphone and digitized by an A/D converter with sampling rate \(F_s\). As a result, we obtain $N$ discrete samples $p_i = p(t_i)$ at times
+Consider a sound pressure signal evolving as a function of time, $x(t)$. The signal is recorded by a microphone and digitized by an A/D converter with sampling rate \(F_s\). As a result, we obtain $N$ discrete samples $x_i = x(t_i)$ at times
 \[
 t_i = (i-1)\tau, \qquad \tau = \frac{1}{F_s}, \quad i = 1, 2, \ldots, N.
 \]
 
-The idea of the Fourier transform is to describe each time-domain data point \(p_i\)
+The idea of the Fourier transform is to describe each time-domain data point \(x_i\)
 as a combination of sine waves, each with amplitude \(A_j\) and phase \(\varphi_j\),
 at discrete frequencies
 \[
@@ -50,36 +50,32 @@ where \(M = (N - 1)/2\) if \(N\) is odd, or \(M = N/2 - 1\) if \(N\) is even.
 The discrete Fourier expansion is then written as:
 \begin{align}
 \text{For odd } N:\quad
-p_i &= A_0 + \sum_{j=1}^{M} A_j \cos\!\big(2\pi f_j t_i + \varphi_j\big), \\[6pt]
+x_i &= A_0 + \sum_{j=1}^{M} A_j \cos\!\big(2\pi f_j t_i + \varphi_j\big), \\[6pt]
 \text{For even } N:\quad
-p_i &= A_0 + \sum_{j=1}^{M} A_j \cos\!\big(2\pi f_j t_i + \varphi_j\big)
+x_i &= A_0 + \sum_{j=1}^{M} A_j \cos\!\big(2\pi f_j t_i + \varphi_j\big)
       + A_{N/2}\cos\!\big(\pi\, t_i / \tau\big).
 \end{align}
 
-Each amplitude–phase pair \((A_j, \varphi_j)\) represents one Fourier component at frequency \(f_j = jF_s/N\). The $A_0$ coefficient is the DC component of the $p_i$ data. Note that the total number of coefficients $A_j$ (including $A_0$) and $\varphi_j$ together equals \(N\). In other words, the number of data points in the frequency domain is the same as in the time domain. The above equations therefore represent a fully determined system. The coefficients \((A_j, \varphi_j)\) can be uniquely obtained from the measured samples \(p_i\) by solving this system, typically using efficient numerical algorithms such as the
+Each amplitude–phase pair \((A_j, \varphi_j)\) represents one Fourier component at frequency \(f_j = jF_s/N\). The $A_0$ coefficient is the DC component of the $x_i$ data. Note that the total number of coefficients $A_j$ (including $A_0$) and $\varphi_j$ together equals \(N\). In other words, the number of data points in the frequency domain is the same as in the time domain. The above equations therefore represent a fully determined system. The coefficients \((A_j, \varphi_j)\) can be uniquely obtained from the measured samples \(x_i\) by solving this system, typically using efficient numerical algorithms such as the
 \emph{Fast Fourier Transform (FFT)}.
 
-Note that the Fourier transform is fully reversible. Given the frequency-domain data \((A_j, \varphi_j)\), the corresponding time-domain signal \(p_i\) can be reconstructed exactly using the same equations.  
+Note that the Fourier transform is fully reversible. Given the frequency-domain data \((A_j, \varphi_j)\), the corresponding time-domain signal \(x_i\) can be reconstructed exactly using the same equations.  
 In other words, the time-domain data describe how the signal evolves over time, while the frequency-domain data represent the same signal in terms of its amplitude and phase distribution across frequencies. Both domains contain precisely the same information; they are simply two equivalent representations of the very same signal.
 
 \subsection{Periodic signals!}
 An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N\tau$.  
 This follows directly from the use of sinusoidal functions, which are themselves periodic.  
-In other words, when representing the discrete time-domain data $p_i$ as a sum of sinusoidal waves, the discrete Fourier transform assumes that this pattern repeats indefinitely for $t < 0$ and $t > T$.  
+In other words, when representing the discrete time-domain data $x_i$ as a sum of sinusoidal waves, the discrete Fourier transform assumes that this pattern repeats indefinitely for $t < 0$ and $t > T$.  
 However, in many practical cases the measured signal is not actually periodic—for example, the impulse response discussed in Section~\ref{sec:impulse-response}.  
 This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions.  
 In the frequency domain, that discontinuity appears as additional spectral content (spectral leakage).
 
 \subsection{Where did the other frequencies go?}
-What happens if the original sound-pressure signal contains frequency components that do not fall exactly at the discrete frequencies $f_j$?  
-In practice, most real-world signals are not composed of a finite set of perfectly aligned frequencies.  
+In practice, most real-world signals are not composed of a finite set of perfectly aligned frequencies $f_j$.  
 Instead, their spectral energy almost always lies between the discrete frequencies sampled by the Fourier transform.
 
-In the discrete Fourier transform, the available frequencies form a set of equally spaced bins, separated by $\Delta f = F_s/N = F_s \tau$.  
-Each bin represents one sinusoidal component used to describe the signal.  
-If a signal’s actual frequency lies between two bins, its energy cannot be captured by a single $f_j$ bin—it spreads into neighbouring bins instead.  
-This effect is known as spectral leakage.  
-While the total energy of the signal remains conserved, leakage can cause sharp spectral features to appear broadened or blurred across multiple frequency bins.
+In the discrete Fourier transform, the available frequencies form equally spaced bins centered at the $f_j$, each with width $\Delta f = F_s/N = F_s \tau$.
+A signal whose frequency does not coincide with one of these discrete $f_j$ values will have its energy distributed over multiple bins, a phenomenon known as spectral leakage. While the total energy of the signal remains conserved, leakage can cause sharp spectral features to appear broadened or blurred across multiple frequency bins.
 
 Sampling also imposes two important frequency limits.  
 The lowest frequency present in the discrete Fourier transform ($f_1 = F_s/N$) is determined by the total length of the digitized signal, $T = N\tau$.  
@@ -89,9 +85,7 @@ Any analog signal components above this limit will be aliased—that is, folded 
 
 
 \section{The impulse response and its Fourier transform}
-
-Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ $j = 1\ldots M$. WHAT ABOUT THE DC COMPONENT $A_0$ AND THE NYQUIST COMPONENT (FOR EVEN N)?  
-When such a signal is converted from the frequency domain to the time domain, the result is a very short pulse at time $t_1$ and zero at all other times $t_{i = 2\ldots N}$—a \emph{Dirac delta}.  
+Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$. The DC component is $A_0 = 1$ and, for even $N$, the Nyquist component is $A_{N/2} = 1$. When such a signal is converted from the frequency domain to the time domain, the result is a very short pulse at time $t_1$ and zero at all other times $t_{i = 2\ldots N}$—a \emph{Dirac delta}.  
 In other words, an ideal Dirac pulse excites all frequencies simultaneously and with equal amplitude.
 
 If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time.  
@@ -110,7 +104,7 @@ Taken together, these features form the bridge between the time and frequency do
 
 [CLEAN UP NOTATION: h vs p FOR TIME-DOMAIN SIGNAL]
 
-Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$, together with a DC component $A_0 = 1$ (and for even $N$, a Nyquist component $A_{N/2} = 1$). When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $p_1 = N$ and $p_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
+Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$, together with a DC component $A_0 = 1$ (and for even $N$, a Nyquist component $A_{N/2} = 1$). When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $x_1 = N$ and $x_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
 
 If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time.  
 The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time.  
@@ -134,16 +128,16 @@ SOMEWHERE MENTION RMS AND DECIBEL CONVERSION: $SPL_j = 20 \times \log_{10} \!\le
 
 
 \begin{itemize}[noitemsep]
-\item Introduction: (1) A single measurement of the impulse response gets us the complete frequency-domain data via the Fourier transform. Sleek! (2) Gating the IR to remove measurement artifacts like echoes: nice, we get the anechoic response without needing an anechoic room. Sleek!
+\item Introduction: (1) A single measurement of the impulse response gets us the complete frequency-domain data via the Fourier transform. Sleek! (2) Gating the IR to remove measurement artifacts like echoes: nice, we get the anechoic response without needing an anechoic room. Sleek!
     \item However, there are limits to the method. Build on the theory section (periodicity, fLow=fResolution, etc.) and demonstrate them in a worked example: (1) Gating room echo by cropping echoic part of the IR data results in less data points, and hence the low-frequency limit and bin width is determined by the arrival/delay time of the first echo.
-    \item Windowing with a taper so smooth out the end of the IR: a "massaging" therapy for the signal to be periodic ($p_N \approx p_1$); but it attenuates/messes the tail of the impulse response, so data is changed or lost.
+    \item Windowing with a taper so smooth out the end of the IR: a "massaging" therapy for the signal to be periodic ($x_N \approx x_1$); but it attenuates/messes the tail of the impulse response, so data is changed or lost.
 \end{itemize}
 
 
 \section{Dealing with reality: The Good, the Bad, and the Ugly}
 DISCUSS THE METHODS INTRODUCED IN PREVIOUS SECTIONS, DEMONSTRATE THEIR (AB)USE AND EFFECTS 
 
-The relationships described in \secn{FourierTheory} define the discrete time and frequency grid on which the Fourier transform operates. Real-world signals rarely align perfectly with this grid, which is why techniques to reduce leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
+The relationships described in \secn{FourierTheory} define the discrete time and frequency grid on which the Fourier transform operates. Real-world signals rarely align perfectly with this grid, which is why techniques to reduce leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \begin{itemize}[noitemsep]
     \item The following sections discuss how real-world processing shapes this transformation:
