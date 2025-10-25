@@ -8,6 +8,7 @@
 \usepackage{titlesec}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage[parfill]{parskip}
 
 \title{How Impulse Responses Become Sound~Pressure~Level~(SPL) Plots:\\[0.7em]\textit{The Good, the Bad, and the Ugly}}
 \author{Matthias S.~Brennwald}
@@ -31,34 +32,41 @@
 
 \section{Time domain vs.\ frequency domain: the Fourier transform}
 
-Assume sound pressure signal evolving as function of time, \(p(t)\). The signal is recorded by a microphone and digitized by an A/D converter with a sampling rate $F_s$. Result: \(N\) discrete samples \(p_i\) at times $t_i = 0, \tau, 2\tau,\ldots, (N-1)\tau$ ($\tau = 1/F_s$).
+Assume a sound pressure signal evolving as a function of time, \(p(t)\).
+The signal is recorded by a microphone and digitized by an A/D converter with sampling rate \(F_s\).
+As a result, we obtain \(N\) discrete samples \(p_i = p(t_i)\) at times
+\[
+t_i = (i-1)\tau, \qquad \tau = \frac{1}{F_s}, \quad i = 1, 2, \ldots, N.
+\]
 
-The idea of the Fourier transform is to describe time-domain data point $p_i$ ($i = 1,\ldots,N$) as a combination of sine waves, each with an amplitude \(A_k\) and phase \(\varphi_k\) at frequencies $f_k = (k-1)F_s/N$:
+The idea of the Fourier transform is to describe each time-domain data point \(p_i\)
+as a combination of sine waves, each with amplitude \(A_j\) and phase \(\varphi_j\),
+at discrete frequencies
+\[
+f_j = \frac{F_s}{N}j, \quad j = 1, 2, \ldots, M,
+\]
+where \(M = (N - 1)/2\) if \(N\) is odd, or \(M = N/2 - 1\) if \(N\) is even.
 
+The discrete Fourier expansion is then written as:
 \begin{align}
-\text{If $N$ is even:}\quad
-x_i &= \frac{A_1}{N}
-      + \frac{A_{N/2+1}}{N}(-1)^{i-1}
-      + \frac{2}{N}\sum_{k=2}^{N/2} A_k \sin\!\big(2\pi f_k t_i + \varphi_k\big) \notag\\[0.8em]
-\text{If $N$ is odd:}\quad
-x_i &= \frac{A_1}{N}
-      + \frac{2}{N}\sum_{k=2}^{(N+1)/2} 
-      A_k \sin\!\big(2\pi f_k t_i + \varphi_k\big)
+\text{For odd } N:\quad
+p_i &= A_0 + \sum_{j=1}^{M} A_j \sin\!\big(2\pi f_j t_i + \varphi_j\big), \\[6pt]
+\text{For even } N:\quad
+p_i &= A_0 + \sum_{j=1}^{M} A_j \sin\!\big(2\pi f_j t_i + \varphi_j\big)
+      + A_{N/2}\cos\!\big(\pi\, t_i / \tau\big).
 \end{align}
 
+Each amplitude–phase pair \((A_j, \varphi_j)\) represents one Fourier component at frequency \(f_j = jF_s/N\). The $A_0$ coefficient is the DC component of the $p_i$ data. Note that the total number of coefficients $A_j$ (including $A_0$) and $\varphi_j$ together equals \(N\). In other words, the number of data points in the frequency domain is the same as in the time domain. The above equations therefore represent a fully determined system. The coefficients \((A_j, \varphi_j)\) can be uniquely obtained from the measured samples \(p_i\) by solving this system, typically using efficient numerical algorithms such as the
+\emph{Fast Fourier Transform (FFT)}.
+
+The Fourier transform is reversible. Given the frequency-domain data \((A_j, \varphi_j)\),
+the corresponding time-domain signal \(p_i\) can be reconstructed exactly using the same equations.
+
+The time domain describes how the signal evolves over time, whereas the frequency domain expresses
+the same information in terms of the amplitude and phase distribution across frequencies.
 
 
-
-Each amplitude–phase pair \((A_k,\varphi_k)\) represents one Fourier component with frequency $f_k = (k-1)F_s/N\).
-
-NOTE THAT NUMBER OF COEFFICIENTS $A_k$ AND $\varphi_k)$ SUMS UP TO $N$. IN OTHER WORDS, THE NUMBER OF DATA POINTS IN THE FREQUENCY-DOMAIN IS ALWAYS EQUAL TO THE NUMBER OF TIME-DOMAIN DATA POINTS. THE ABOVE EQUATIONS THEREFORE DESCRIBE A FULLY DETERMINED EQUATION SYSTEM. THE ($A_k$ AND $\varphi_k)$) CAN THEREFORE BE DETERMINED FROM THE MEASURED $x_i$ BY SOLVING THE EQUATION SYSTEM, USUALLY EMPLYING SUITABLE COMPUTER ALGORITHMS (FAST FOURIER TRANSFORM, FFT).
-
-NOTE THAT THE TRANSFORM ALSO WORKS BACKWARDS, FROM TIME DOMAIN TO FREQUENCY DOMAIN. GIVEN THE FREQUENCY DOMAIN DATA $(A_k,\varphi_k)$, THE CORRESONDING TIME-DOMAIN SIGNAL CAN BE DETERMINED EXACTLY FROM THE ABOVE EQUATIONS.
-
-The time domain describes how the signal evolves over time, whereas the frequency domain expresses the same information in terms of the \emph{amplitude and phase distribution} across frequencies.
-
-
-\section{How Loud Is the Loudspeaker? One Test for All Frequencies}
+\section{How Loud Is the Speaker? One Test for All Frequencies}
 
 \begin{itemize}[noitemsep]
     \item Imagine a test signal that contains all frequencies with equal amplitude and zero phase.
