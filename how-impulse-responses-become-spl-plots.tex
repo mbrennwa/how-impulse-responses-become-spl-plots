@@ -10,31 +10,28 @@
 \usepackage{hyperref}
 \usepackage[parfill]{parskip}
 
-\title{How Impulse Responses Become Sound~Pressure~Level~(SPL) Plots:\\[0.7em]\textit{The Good, the Bad, and the Ugly}}
+\title{How Loudspeaker Impulse Responses Become Sound~Pressure~Level~(SPL) Plots:\\[0.7em]\textit{The Good, the Bad, and the Ugly}}
 \author{Matthias S.~Brennwald}
 \date{Document version \today}
 
 \begin{document}
 \maketitle
 
-\section{Motivation: Why Frequency Response Matters}
+\section{Introduction}
+\section*{Introduction}
 
-\begin{itemize}[noitemsep]
-    \item The goal is to determine how loud a loudspeaker is at each frequency.
-    \item A straightforward approach is to play pure tones at different frequencies, record the sound pressure level (SPL), and connect the dots to form a curve of SPL vs.\ frequency.
-    \item This method is slow and affected by reflections and echoes, unless performed in an anechoic chamber.
-    \item A more efficient and accessible alternative relies on the \textbf{impulse response} and the \textbf{Fourier transform}.
-    \item This text is a practical and occasionally irreverent guide to turning impulse-response measurements from the time domain into meaningful SPL data in the frequency domain. It explores how an impulse response represents a loudspeaker's acoustic behaviour and how the data is processed, interpreted, and occasionally abused.
-\end{itemize}
+Every loudspeaker designer or tinkerer wants to know how well their loudspeaker performs acoustically. Does it reproduce all frequencies evenly, or does it emphasise some and hide others? The answer lies in its SPL frequency response curve, which shows how loud the speaker is at each frequency.
 
-\vspace{1em}
-\noindent\textbf{Figure 1:} Measuring tone-by-tone versus using a single broadband test.
+Understanding and visualising the SPL response is central to almost every aspect of loudspeaker design and evaluation—from developing new drivers to characterising enclosures and interpreting room interactions. The goal seems simple: determine how a loudspeaker responds to different frequencies. The challenge lies in doing so accurately and efficiently, without (unintended) cheating.
+
+An intuitive approach to determine the SPL curve of a loudspeaker would be to play one sine wave with a given frequency at a time, measure the resulting sound pressure level (SPL), repeat the process at the next frequency, and plot the SPL results across frequency. However, this method is very time-consuming and works reliably only in an anechoic environment, as room reflections and echoes can severely distort the measurement. Modern techniques achieve the same result in a single measurement step: they excite the loudspeaker with a short, broadband signal and use the Fourier transform to reveal the frequency response from the measured time-domain data.
+
+This document introduces the concepts that link time-domain measurements (such as impulse responses) to frequency-domain data (such as SPL curves). It aims to provide a practical, intuitive explanation of what the Fourier transform does for loudspeaker measurements—and why understanding its limitations is just as important as applying it. Later sections explore both the strengths and the pitfalls of this process: the good, the bad, and occasionally the ugly.
+
 
 \section{Time domain vs.\ frequency domain: the Fourier transform}
 
-Assume a sound pressure signal evolving as a function of time, \(p(t)\).
-The signal is recorded by a microphone and digitized by an A/D converter with sampling rate \(F_s\).
-As a result, we obtain \(N\) discrete samples \(p_i = p(t_i)\) at times
+Assume a sound pressure signal evolving as a function of time, $p(t)$. The signal is recorded by a microphone and digitized by an A/D converter with sampling rate \(F_s\). As a result, we obtain $N$ discrete samples $p_i = p(t_i)$ at times
 \[
 t_i = (i-1)\tau, \qquad \tau = \frac{1}{F_s}, \quad i = 1, 2, \ldots, N.
 \]
@@ -66,21 +63,25 @@ The time domain describes how the signal evolves over time, whereas the frequenc
 the same information in terms of the amplitude and phase distribution across frequencies.
 
 
-\section{How Loud Is the Speaker? One Test for All Frequencies}
+\section{The loudspeaker impulse response and its Fourier transform}
 
-\begin{itemize}[noitemsep]
-    \item Imagine a test signal that contains all frequencies with equal amplitude and zero phase.
-    \item Using the inverse Fourier transform, this frequency-domain description can be converted into the time domain.
-    \item The result is a very short pulse—mathematically a \textbf{Dirac delta}, or in practice a broadband \textbf{impulse}.
-    \item When such a signal drives the loudspeaker, the microphone records its acoustic output over time.
-    \item The resulting waveform, \(h(t)\), is the \textbf{impulse response}, expressed in sound pressure (Pa) as a function of time.
-    \item Each peak, dip, and reflection in \(h(t)\) corresponds to how the loudspeaker and room respond to different frequencies.
-\end{itemize}
+Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = \text{const.}$ and $\varphi_j = 0$ for all $j$ in the frequency domain.  
+When such a signal is converted from the frequency domain to the time domain, the result is a very short pulse at time $t_1$ and zero at all other times $t_{i = 2\ldots N}$—a \emph{Dirac delta}.  
+In other words, an ideal Dirac pulse excites all frequencies simultaneously and with equal amplitude.
 
-\vspace{1em}
-\noindent\textbf{Figure 3:} Ideal impulse (test signal) and measured impulse response of a loudspeaker.
+If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time.  
+The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time.  
+Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies—revealing its deviation from a perfectly flat, ideal response.
 
-\section{From Impulse to Frequency --- The FFT}
+The impulse response thus captures the complete acoustic behaviour of the loudspeaker (and the surrounding room): every resonance, reflection, and delay leaves its fingerprint in $h(t)$.  
+Early peaks correspond to the direct sound from the driver, later ripples often indicate cabinet or cone resonances, and delayed arrivals show reflections from walls or nearby surfaces.  
+Taken together, these features form the bridge between the time and frequency domains.
+
+
+[INSERT FIGURE HERE -- PANEL (A): DIRAC DELTA (SPEAKER INPUT) -- PANEL (B): SPEAKER IMPULSE RESPONSE (WITH ANNOTATIONS OF FEATURES AS MENTIONED IN TEXT) *** USE REAL MEASURED DATA]
+
+
+\section{From impulse response to the SPL curve}
 
 \begin{itemize}[noitemsep]
     \item Applying a Fourier transform to \(h(t)\) yields \(H(f)\), the loudspeaker’s frequency response.
