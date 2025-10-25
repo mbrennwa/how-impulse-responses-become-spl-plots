@@ -9,6 +9,9 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage[parfill]{parskip}
+\usepackage{siunitx}
+
+\providecommand{\secn}[1]{Sec.~\ref{sec:#1}}
 
 \title{How Loudspeaker Impulse Responses Become Sound~Pressure~Level~(SPL) Plots:\\[0.7em]\textit{The Good, the Bad, and the Ugly}}
 \author{Matthias S.~Brennwald}
@@ -56,11 +59,33 @@ p_i &= A_0 + \sum_{j=1}^{M} A_j \sin\!\big(2\pi f_j t_i + \varphi_j\big)
 Each amplitude–phase pair \((A_j, \varphi_j)\) represents one Fourier component at frequency \(f_j = jF_s/N\). The $A_0$ coefficient is the DC component of the $p_i$ data. Note that the total number of coefficients $A_j$ (including $A_0$) and $\varphi_j$ together equals \(N\). In other words, the number of data points in the frequency domain is the same as in the time domain. The above equations therefore represent a fully determined system. The coefficients \((A_j, \varphi_j)\) can be uniquely obtained from the measured samples \(p_i\) by solving this system, typically using efficient numerical algorithms such as the
 \emph{Fast Fourier Transform (FFT)}.
 
-The Fourier transform is reversible. Given the frequency-domain data \((A_j, \varphi_j)\),
-the corresponding time-domain signal \(p_i\) can be reconstructed exactly using the same equations.
+Note that the Fourier transform is fully reversible. Given the frequency-domain data \((A_j, \varphi_j)\), the corresponding time-domain signal \(p_i\) can be reconstructed exactly using the same equations.  
+In other words, the time-domain data describe how the signal evolves over time, while the frequency-domain data represent the same signal in terms of its amplitude and phase distribution across frequencies. Both domains contain precisely the same information; they are simply two equivalent representations of the very same signal.
 
-The time domain describes how the signal evolves over time, whereas the frequency domain expresses
-the same information in terms of the amplitude and phase distribution across frequencies.
+\subsection{Periodic signals!}
+An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N\tau$.  
+This follows directly from the use of sine functions, which are themselves periodic.  
+In other words, when representing the discrete time-domain data $p_i$ as a sum of sine waves, the discrete Fourier transform assumes that this pattern repeats indefinitely for $t < 0$ and $t > T$.  
+However, in many practical cases the measured signal is not actually periodic—for example, the impulse response discussed in Section~\ref{sec:impulse-response}.  
+This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions.  
+In the frequency domain, that discontinuity appears as additional spectral content (spectral leakage).
+
+\subsection{Where did the other frequencies go?}
+What happens if the original sound-pressure signal contains frequency components that do not fall exactly at the discrete frequencies $f_j$?  
+In practice, most real-world signals are not composed of a finite set of perfectly aligned frequencies.  
+Instead, their spectral energy almost always lies between the discrete frequencies sampled by the Fourier transform.
+
+In the discrete Fourier transform, the available frequencies form a set of equally spaced bins, separated by $\Delta f = F_s/N = F_s \tau$.  
+Each bin represents one sine-wave component used to describe the signal.  
+If a signal’s actual frequency lies between two bins, its energy cannot be captured by a single $f_j$ bin—it spreads into neighbouring bins instead.  
+This effect is known as spectral leakage.  
+While the total energy of the signal remains conserved, leakage can cause sharp spectral features to appear broadened or blurred across multiple frequency bins.
+
+Sampling also imposes two important frequency limits.  
+The lowest frequency present in the discrete Fourier transform ($f_1 = F_s/N$) is determined by the total length of the digitized signal, $T = N\tau$.  
+Because the bin width $\Delta f$ equals $f_1$, the signal duration also defines the frequency resolution of the time-domain data.  
+The highest resolvable frequency ($f_M = F_s \times M / N$) is determined by the sampling rate: according to the Nyquist theorem, no frequency above $F_s/2$ can be represented in the digitized data.  
+Any analog signal components above this limit will be aliased—that is, folded back—to appear as spurious lower-frequency components in the sampled data.
 
 
 \section{The loudspeaker impulse response and its Fourier transform}
@@ -81,19 +106,22 @@ Taken together, these features form the bridge between the time and frequency do
 [INSERT FIGURE HERE -- PANEL (A): DIRAC DELTA (SPEAKER INPUT) -- PANEL (B): SPEAKER IMPULSE RESPONSE (WITH ANNOTATIONS OF FEATURES AS MENTIONED IN TEXT) *** USE REAL MEASURED DATA]
 
 
-\section{From impulse response to the SPL curve}
+\section{From impulse response to the SPL curve: gating and window functions (reality bites!)}
+
+SOMEWHERE MENTION RMS AND DECIBEL CONVERSION: $SPL_j = 20 \times \log_{10} \!\left( \frac{A_j / \sqrt{2}}{P_{\mathrm{ref}}} \right)$ WITH $P_{\mathrm{ref}} = \SI{20}{\micro\pascal}$,
+
 
 \begin{itemize}[noitemsep]
-    \item Applying a Fourier transform to \(h(t)\) yields \(H(f)\), the loudspeaker’s frequency response.
-    \item The magnitude of \(H(f)\) indicates the relative sound level of each frequency; the phase describes timing and coherence.
-    \item With microphone calibration, magnitudes can be expressed as sound pressure level (SPL) in decibels (re~20~µPa).
-    \item The transformation from \(h(t)\) to \(H(f)\) turns a single broadband measurement into the familiar SPL vs.\ frequency curve.
+\item Introduction: (1) A single measurement of the impulse response gets us the complete frequency-domain data via the Fourier transform. Sleek! (2) Gating the IR to remove measurement artifacts like echoes: nice, we get the anechoic response without needing an anechoic room. Sleek!
+    \item However, there are limits to the method. Build on the theory section (periodicity, fLow=fResolution, etc.) and demonstrate them in a worked example: (1) Gating room echo by cropping echoic part of the IR data results in less data points, and hence the low-frequency limit and bin width is determined by the arrival/delay time of the first echo.
+    \item Windowing with a taper so smooth out the end of the IR: a "massaging" therapy for the signal to be periodic ($p_N \approx p_1$); but it attenuates/messes the tail of the impulse response, so data is changed or lost.
 \end{itemize}
 
-\vspace{1em}
-\noindent\textbf{Figure 4:} Impulse response and its corresponding SPL frequency response.
 
-\section{The Good, the Bad, and the Ugly (Preview)}
+\section{Dealing with reality: The Good, the Bad, and the Ugly}
+DISCUSS THE METHODS INTRODUCED IN PREVIOUS SECTIONS, DEMONSTRATE THEIR (AB)USE AND EFFECTS 
+
+The relationships described in \secn{FourierTheory} define the discrete time and frequency grid on which the Fourier transform operates. Real-world signals rarely align perfectly with this grid, which is why techniques to reduce leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \begin{itemize}[noitemsep]
     \item The following sections discuss how real-world processing shapes this transformation:
