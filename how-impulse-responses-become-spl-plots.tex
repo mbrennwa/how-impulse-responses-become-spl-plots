@@ -90,7 +90,7 @@ Any analog signal components above this limit will be aliased—that is, folded 
 
 \section{The impulse response and its Fourier transform}
 
-Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = \text{const.}$ and $\varphi_j = 0$ for all $j$ in the frequency domain.  
+Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ $j = 1\ldots M$. WHAT ABOUT THE DC COMPONENT $A_0$ AND THE NYQUIST COMPONENT (FOR EVEN N)?  
 When such a signal is converted from the frequency domain to the time domain, the result is a very short pulse at time $t_1$ and zero at all other times $t_{i = 2\ldots N}$—a \emph{Dirac delta}.  
 In other words, an ideal Dirac pulse excites all frequencies simultaneously and with equal amplitude.
 
@@ -101,6 +101,28 @@ Because the input contains all frequencies equally, any variation in the measure
 The impulse response thus captures the complete acoustic behaviour of the loudspeaker (and the surrounding room): every resonance, reflection, and delay leaves its fingerprint in $h(t)$.  
 Early peaks correspond to the direct sound from the driver, later ripples often indicate cabinet or cone resonances, and delayed arrivals show reflections from walls or nearby surfaces.  
 Taken together, these features form the bridge between the time and frequency domains.
+
+
+
+
+
+\section{The impulse response and its Fourier transform}
+
+[CLEAN UP NOTATION: h vs p FOR TIME-DOMAIN SIGNAL]
+
+Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$, together with a DC component $A_0 = 1$ (and for even $N$, a Nyquist component $A_{N/2} = 1$). When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $p_1 = N$ and $p_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
+
+If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time.  
+The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time.  
+Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies—revealing its deviation from a perfectly flat, ideal response.
+
+The impulse response thus captures the complete acoustic behaviour of the loudspeaker (and the surrounding room): every resonance, reflection, and delay leaves its fingerprint in $h(t)$.  
+Early peaks correspond to the direct sound from the driver, later ripples often indicate cabinet or cone resonances, and delayed arrivals show reflections from walls or nearby surfaces.  
+Taken together, these features form the bridge between the time and frequency domains.
+
+
+
+
 
 
 [INSERT FIGURE HERE -- PANEL (A): DIRAC DELTA (SPEAKER INPUT) -- PANEL (B): SPEAKER IMPULSE RESPONSE (WITH ANNOTATIONS OF FEATURES AS MENTIONED IN TEXT) *** USE REAL MEASURED DATA]
