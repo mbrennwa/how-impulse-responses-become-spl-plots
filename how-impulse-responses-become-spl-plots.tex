@@ -10,9 +10,13 @@
 \usepackage{hyperref}
 \usepackage[parfill]{parskip}
 \usepackage{siunitx}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
 
 \providecommand{\seclabel}[1]{\label{sec:#1}}
 \providecommand{\secn}[1]{Sec.~\ref{sec:#1}}
+\providecommand{\figlabel}[1]{\label{fig:#1}}
+\providecommand{\figr}[1]{Fig.~\ref{fig:#1}}
 
 \title{How Loudspeaker Impulse Responses Become Sound~Pressure~Level~(SPL) Plots:\\[0.7em]\textit{The Good, the Bad, and the Ugly}}
 \author{Matthias S.~Brennwald}
@@ -100,8 +104,6 @@ Early peaks correspond to the direct sound from the driver, later ripples often 
 
 \section{The impulse response and its Fourier transform}
 
-[CLEAN UP NOTATION: h vs p FOR TIME-DOMAIN SIGNAL]
-
 Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$, together with a DC component $A_0 = 1$ (and for even $N$, a Nyquist component $A_{N/2} = 1$). When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $x_1 = N$ and $x_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
 
 If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time.  
@@ -114,11 +116,13 @@ Taken together, these features form the bridge between the time and frequency do
 
 
 
-
-
-
-[INSERT FIGURE HERE -- PANEL (A): DIRAC DELTA (SPEAKER INPUT) -- PANEL (B): SPEAKER IMPULSE RESPONSE (WITH ANNOTATIONS OF FEATURES AS MENTIONED IN TEXT) *** USE REAL MEASURED DATA]
-
+\begin{figure}
+  \begin{center}
+    \includegraphics{FIGURE1}
+    \caption{Loudspeaker impulse response. (A) The Dirac input to the loudspeaker, (B) loudspeaker impulse response in an anechoic environment, (C) impulse response of the same loudspeaker, but with echos from the room walls.}
+    \figr{FIG1}
+  \end{center}
+\end{figure}
 
 \section{From impulse response to the SPL curve: gating and window functions (reality bites!)}
 
