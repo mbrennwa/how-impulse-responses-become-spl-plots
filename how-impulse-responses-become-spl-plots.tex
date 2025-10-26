@@ -107,8 +107,8 @@ Early peaks correspond to the direct sound from the driver, later ripples often 
 Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$, together with a DC component $A_0 = 1$ (and for even $N$, a Nyquist component $A_{N/2} = 1$). When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $x_1 = N$ and $x_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
 
 If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time.  
-The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time.  
-Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies—revealing its deviation from a perfectly flat, ideal response.
+The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time (see \figr{FIGURE1}).
+Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies—revealing its deviation from a perfectly flat, ideal response.\footnote{In practice, a very large impulse is required to achieve a good signal-to-noise ratio of the measurement. Most measurement tools therefore do \emph{not} use a Dirac impulse to determine the impulse-response, but rely on maximum-length sequences, broadband noise, or sine sweeps to excite the loudspeaker. The recorded loudspeaker response is the deconvolved from the test signal to obtain the impulse response. The result is the same as in our thought experiment, but with less measurement noise.}
 
 The impulse response thus captures the complete acoustic behaviour of the loudspeaker (and the surrounding room): every resonance, reflection, and delay leaves its fingerprint in $h(t)$.  
 Early peaks correspond to the direct sound from the driver, later ripples often indicate cabinet or cone resonances, and delayed arrivals show reflections from walls or nearby surfaces.  
@@ -116,11 +116,11 @@ Taken together, these features form the bridge between the time and frequency do
 
 
 
-\begin{figure}
+\begin{figure}[tbp]
   \begin{center}
     \includegraphics{FIGURE1}
     \caption{Loudspeaker impulse response. (A) The Dirac input to the loudspeaker, (B) loudspeaker impulse response in an anechoic environment, (C) impulse response of the same loudspeaker, but with echos from the room walls.}
-    \figr{FIG1}
+    \figlabel{FIGURE1}
   \end{center}
 \end{figure}
 
