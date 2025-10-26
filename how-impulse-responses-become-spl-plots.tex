@@ -17,6 +17,7 @@
 \providecommand{\secn}[1]{Sec.~\ref{sec:#1}}
 \providecommand{\figlabel}[1]{\label{fig:#1}}
 \providecommand{\figr}[1]{Fig.~\ref{fig:#1}}
+\providecommand{\pRef}{p_\mathrm{ref}}
 
 \title{How Loudspeaker Impulse Responses Become Sound~Pressure~Level~(SPL) Plots:\\[0.7em]\textit{The Good, the Bad, and the Ugly}}
 \author{Matthias S.~Brennwald}
@@ -99,9 +100,6 @@ The impulse response thus captures the complete acoustic behaviour of the loudsp
 Early peaks correspond to the direct sound from the driver, later ripples often indicate cabinet or cone resonances, and delayed arrivals show reflections from walls or nearby objects.
 
 
-
-
-
 \section{The impulse response and its Fourier transform}
 
 Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$, together with a DC component $A_0 = 1$ (and for even $N$, a Nyquist component $A_{N/2} = 1$). When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $x_1 = N$ and $x_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
@@ -124,14 +122,26 @@ In practice, most measurements cannot be carried out in a perfectly anechoic env
 
 \section{From impulse response to the SPL curve: gating and window functions (reality bites!)}
 
-SOMEWHERE MENTION RMS AND DECIBEL CONVERSION: $SPL_j = 20 \times \log_{10} \!\left( \frac{A_j / \sqrt{2}}{P_{\mathrm{ref}}} \right)$ WITH $P_{\mathrm{ref}} = \SI{20}{\micro\pascal}$,
+We have seen how a single measurement of the impulse response contains everything needed to determine a loudspeaker’s acoustic behaviour.
+But before Fourier-transforming the time-domain measurement, let's take a closer look at \figr{FIGURE1}-C: the beginning of the impulse-response measurement (green) represents the flight time of the sound from the loudspeaker to the microphone and contains no useful information about the loudspeaker itself.
+The initial part of the impulse response (blue) shows the direct sound from the loudspeaker.
+After the arrival of the first echoes, the direct signal becomes masked by reflections from the room.
+This echoic part of the signal (red) still contains the loudspeaker’s output, but it can no longer be used to assess the loudspeaker’s own behaviour.
+
+Only the anechoic segment of the impulse response can therefore be used to characterise the loudspeaker’s behaviour under anechoic conditions. The flight-time and echoic parts of the impulse-response measurement are discarded, in other words, the impulse response is gated to its anechoic part. The Fourier transform of this gated impulse response then yields the amplitude coefficients $A_j$, and hence the loudspeaker’s clean, anechoic SPL data in units of dB-SPL:
+\[
+\mathrm{SPL}(f_j) = 20 \log_{10}\left( \frac{A_j / \sqrt{2}}{\pRef} \right)
+\]
+where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure. \figr{FIGURE2} shows the SPL curve determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The curve may not look very pretty and the staircase display may seem awkward. This is intentional and relates the great power of the method -- which also comes with great responsibility, as the next sections will make clear.
+
+[FIGURE2: SHOW THE SPL CURVE FROM THE BLUE PART IN FIGURE1.]
+
+\subsection{Low-frequency extension and frequency-resolution of the SPL curve}
+DISCUSS HERE. LF LIMIT $f_1$ and BIN WIDTH $\Delta f$.
 
 
-\begin{itemize}[noitemsep]
-\item Introduction: (1) A single measurement of the impulse response gets us the complete frequency-domain data via the Fourier transform. Sleek! (2) Gating the IR to remove measurement artifacts like echoes: nice, we get the anechoic response without needing an anechoic room. Sleek!
-    \item However, there are limits to the method. Build on the theory section (periodicity, fLow=fResolution, etc.) and demonstrate them in a worked example: (1) Gating room echo by cropping echoic part of the IR data results in less data points, and hence the low-frequency limit and bin width is determined by the arrival/delay time of the first echo.
-    \item Windowing with a taper so smooth out the end of the IR: a "massaging" therapy for the signal to be periodic ($x_N \approx x_1$); but it attenuates/messes the tail of the impulse response, so data is changed or lost.
-\end{itemize}
+\subsection{Is the gated impulse response periodic?}
+DISCUSS HERE. WINDOW FUNCTIONS TO FORCE PERIODIC SIGNAL. attenuates/messes the tail of the impulse response, so data is changed or lost.
 
 
 \section{Dealing with reality: The Good, the Bad, and the Ugly}
