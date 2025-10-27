@@ -114,8 +114,8 @@ In practice, most measurements cannot be carried out in a perfectly anechoic env
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics{FIGURE1}
-    \caption{Loudspeaker impulse response. (A) The Dirac input to the loudspeaker, (B) loudspeaker impulse response in an anechoic environment, (C) impulse response of the same loudspeaker, but with echos from the room walls.}
+    \includegraphics[width=0.7\textwidth]{FIGURE1}
+    \caption{Loudspeaker impulse response. (A) The Dirac signal input to the loudspeaker, (B) loudspeaker impulse response in an anechoic environment (which is usually not accessible with a typical measurement setup), (C) impulse response of the same loudspeaker, but from a more typical measurement setup resulting in echos from the room walls.}
     \figlabel{FIGURE1}
   \end{center}
 \end{figure}
@@ -132,9 +132,15 @@ Only the anechoic segment of the impulse response can therefore be used to chara
 \[
 \mathrm{SPL}(f_j) = 20 \log_{10}\left( \frac{A_j / \sqrt{2}}{\pRef} \right)
 \]
-where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure. \figr{FIGURE2} shows the SPL curve determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The curve may not look very pretty and the staircase display may seem awkward. This is intentional and relates the great power of the method -- which also comes with great responsibility, as the next sections will make clear.
+where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure. \figr{FIGURE2} shows the SPL curve determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The curve may not look very pretty and the staircase display may seem awkward. This is intentional and relates to the great power of the method -- which also comes with great responsibility, as \secn{GoodBadUgly} will make clear.
 
 [FIGURE2: SHOW THE SPL CURVE FROM THE BLUE PART IN FIGURE1.]
+
+
+\section{Dealing with reality: The Good, the Bad, and the Ugly}
+DISCUSS THE METHODS INTRODUCED IN PREVIOUS SECTIONS, DEMONSTRATE THEIR (AB)USE AND EFFECTS 
+
+% The relationships described in \secn{Fourier_Theory} define the discrete time and frequency grid on which the Fourier transform operates. Real-world signals rarely align perfectly with this grid, which is why techniques to reduce leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \subsection{Low-frequency extension and frequency-resolution of the SPL curve}
 DISCUSS HERE. LF LIMIT $f_1$ and BIN WIDTH $\Delta f$.
@@ -144,10 +150,6 @@ DISCUSS HERE. LF LIMIT $f_1$ and BIN WIDTH $\Delta f$.
 DISCUSS HERE. WINDOW FUNCTIONS TO FORCE PERIODIC SIGNAL. attenuates/messes the tail of the impulse response, so data is changed or lost.
 
 
-\section{Dealing with reality: The Good, the Bad, and the Ugly}
-DISCUSS THE METHODS INTRODUCED IN PREVIOUS SECTIONS, DEMONSTRATE THEIR (AB)USE AND EFFECTS 
-
-The relationships described in \secn{Fourier_Theory} define the discrete time and frequency grid on which the Fourier transform operates. Real-world signals rarely align perfectly with this grid, which is why techniques to reduce leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \begin{itemize}[noitemsep]
     \item The following sections discuss how real-world processing shapes this transformation:
