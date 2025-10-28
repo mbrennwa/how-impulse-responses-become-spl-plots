@@ -166,11 +166,12 @@ print ("FIGURE3.pdf", "-dpdf")
 
 L = round(length(t)/1.5); % taper length
 w = [ repmat(1,length(t)-L,1); 0.5*cos([0:L-1]'/(L-1)*pi)+0.5];
+hw = h.*w;
 
 [ax, h1, h2] = plotyy(t,1000*h, t,100*w); % h(t) before windowing and w(t) on second axis
 set(h1, 'color', col);
 hold(ax(1),'on');
-plot(ax(1), t,1000*h.*w,'color','k'); % h(t) after windowing
+plot(ax(1), t,1000*hw,'color','k'); % h(t) after windowing
 
 ylim(ax(1), [r(3) r(4)]);
 

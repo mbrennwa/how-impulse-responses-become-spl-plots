@@ -195,22 +195,19 @@ In summary, windowing helps the impulse response conform to the assumptions of t
 
 This sharp discontinuity has consequences in the frequency domain. The abrupt jump acts like a sudden transition in the waveform, which the Fourier transform represents as additional high-frequency content. These components do not pertain to the loudspeaker; they are artefacts of how the truncated signal is interpreted, not of the measurement itself.
 
-A common way to reduce this effect is to apply a window function\footnote{There is a whole zoo of window functions, but their individual characteristics are beyond the scope of this document.} to the gated impulse response before taking the Fourier transform. The idea is simple: smooth the end of the signal so that it gently approaches the same value as the beginning, which is typically close to zero within the background noise. This removes or softens the artificial step that would otherwise appear at the boundary of the periodic signal. Various window shapes exist, but they all serve the same purpose: to make the transition between start and end continuous enough for the Fourier transform to behave well.
+A common way to reduce this effect is to apply a window function\footnote{There is a whole zoo of window functions, but their individual characteristics are beyond the scope of this document.} to the gated impulse response before taking the Fourier transform (\figr{FIGURE4}). The idea is simple: smooth the end of the signal so that it gently approaches the same value as the beginning, which is typically close to zero within the background noise. This removes or softens the artificial step that would otherwise appear at the boundary of the periodic signal. Various window shapes exist, but they all serve the same purpose: to make the transition between start and end continuous enough for the Fourier transform to behave well.
 
-[ADD A FIGURE SHOWING THE WINDOWING EFFECT]
+\begin{figure}[tbp]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{FIGURE4}
+    \caption{Multiplying the gated impulse resonse (gray) with a window function (red) to make the impulse response periodic (black).}
+    \figlabel{FIGURE4}
+  \end{center}
+\end{figure}
 
 Although windowing reduces unwanted high-frequency artefacts and yields a cleaner-looking SPL curve, it inevitably modifies the data. The window attenuates the tail of the impulse response and therefore weakens, or even removes, some of the valid information contained there. The result may be visually smoother but is no longer a perfectly faithful representation of the original measurement.
 
 In summary, windowing helps the impulse response conform to the assumptions of the Fourier transform and suppresses artefacts caused by the artificial periodic continuation. However, it must be used with care: it clarifies the true behaviour of the loudspeaker only as long as it does not erase the very details that describe it.
-
-
-
-
-
-
-
-
-
 
 
 \subsection{Is the gated impulse respnose too short?}
@@ -226,7 +223,7 @@ There is no way to extract robust information on the anechoic response below $f_
 DISCUSS HERE. LF LIMIT $f_1$ and BIN WIDTH $\Delta f$.
 
 
-
+[ADD AND DISCUSS A FIGURE COMPARING THE SPL CURVE FROM THE MASSAGED IR WITH THE ORIGINAL STAIRS CURVE (DO NOT SHOW PHASE FOR EASIER VIEWING). ALSO ADD A REFERENCE CURVE WITH THE SPL FROM THE FULL ANECHOIC RESPONSE IN FIGURE 1-B AS A 'TRUTH REFERENCE' FOR THE MASSAGED DATA.]
 
 
 \begin{itemize}[noitemsep]
