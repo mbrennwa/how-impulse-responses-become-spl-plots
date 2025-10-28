@@ -6,6 +6,7 @@ pkg load signal
 clear all; close all;
 
 graphics_toolkit("qt")
+% graphics_toolkit("gnuplot")
 
 % Figure 1: time domain:
 [figh, siz, fontsiz] = plot_defaults([7,9],14); 
@@ -26,11 +27,11 @@ set(gca, 'XTickLabel', []);
 
 % Panel B: Speaker response (no echo)
 x = load('12PR320_1m_onaxis.mat');
-t = x.t*1000; % time in ms
-h = x.h; % sound pressure in µPa
+t0 = x.t*1000; % time in ms
+h0 = x.h; % sound pressure in µPa
 t_start = 3.08; % start of IR
 ax2 = subplot(3,1,2);
-plot(t,1000*h,'k-');
+plot(t0,1000*h0,'k-');
 r([3,4]) = [-70,120];
 axis(r)
 text (r(2)*0.97, r(4) - (r(4)-r(3))*0.18, '(B) Speaker output (no echos)', 'fontsize', fontsiz,'horizontalalignment','right');
@@ -41,8 +42,8 @@ set(gca, 'XTickLabel', []);
 randn("seed", 1234);  % for reproducible random numbers (when replotting)
 delay1 = 3.15; % echo delay (ms)
 ndelay1 = round(delay1/1000*x.fs);
-echo1 = h(1:end-ndelay1);
-echo1 = [ zeros(ndelay1,1) ; h(1:end-ndelay1)];
+echo1 = h0(1:end-ndelay1);
+echo1 = [ zeros(ndelay1,1) ; h0(1:end-ndelay1)];
 k = find(t>t_start+delay1);
 echo1(k) = echo1(k) + 0.022*randn(length(k),1);
 [b, a] = butter(1, 2500/(x.fs/2)); % Normalized cutoff = fc / (fs/2)
@@ -50,11 +51,13 @@ echo1 = filtfilt(b, a, echo1);
 
 delay2 = 6.07; % echo delay (ms)
 ndelay2 = round(delay2/1000*x.fs);
-echo2 = [ zeros(ndelay2,1) ; h(1:end-ndelay2)];
+echo2 = [ zeros(ndelay2,1) ; h0(1:end-ndelay2)];
 [b, a] = butter(1, 1500/(x.fs/2)); % Normalized cutoff = fc / (fs/2)
 echo2 = filtfilt(b, a, echo2);
 
-h = h + 0.33*echo1 + 0.5*echo2;
+% h0 + echos:
+h = h0 + 0.33*echo1 + 0.5*echo2; 
+t = t0;
 
 ax3 = subplot(3,1,3);
 k1 = find(t<=t_start);
@@ -90,12 +93,12 @@ phase = mod(phase + 180, 360) - 180; % wrap to +180...-180
 [ax, h1, h2] = plotyy (f-f(1)/2, mag, f-f(1)/2, phase, @stairs, @stairs);
 
 % set light colors for the stairs lines:
-alpha = 0.8; lw = 2;
+alpha = 0.8; lw = 2.4;
 set (h1, 'color', [alpha alpha 1], 'linewidth', lw);
 set (h2, 'color', [1 alpha alpha], 'linewidth', lw);
 
 % data points as dots:
-ms = 14;
+ms = 16;
 hold(ax(1), "on")
 plot(ax(1), f, mag, 'b.', 'markersize', ms)
 
@@ -110,7 +113,7 @@ ylim(ax(1), [40 100])      % left y-axis limits
 ylim(ax(2), [-180 180])     % right y-axis limits
 set(ax(1),'ytick',[0:10:200]);
 set(ax(2),'ytick',[-180:90:180]);
-xlim(ax(1), [100 30e3])      % sets the x-axis range
+xlim(ax(1), [100 22e3])      % sets the x-axis range
 set(ax,'xtick',[0.1 0.3 1 3 10 30 100 300 1000 3000 10000 30000]);
 xt = get(ax,'xticklabel'){1};
 xt = strrep(xt,'10^{-2}','0.01');
@@ -121,8 +124,8 @@ xt = strrep(xt,'10^{2}','100');
 xt = strrep(xt,'3x0.1','0.3');
 xt = strrep(xt,'3x1','3');
 xt = strrep(xt,'3x10','30');
-xt = strrep(xt,'10^{3}','1000');
-xt = strrep(xt,'30^{3}','3000');
+xt = strrep(xt,'10^{3}','1k');
+xt = strrep(xt,'30^{3}','3k');
 xt = strrep(xt,'10^{4}','10k');
 xt = strrep(xt,'30^{4}','30k');
 set(ax,'xticklabel',xt);
@@ -134,7 +137,7 @@ end
 set(ax(2),'yticklabel',yt);
 
 
-xlabel ("Frequency (kHz)");
+xlabel ("Frequency (Hz)");
 ylabel (ax(1), "SPL (dB-SPL)");
 ylabel (ax(2), "Phase");
 
@@ -192,4 +195,59 @@ xlabel ('Time (ms)')
 ylabel ('Pressure (mPa)')
 
 print ("FIGURE4.pdf", "-dpdf")
+
+
+
+
+% Figure 5: zero padding of windowed IR, and SPL curve
+% compare to gated IR without massage
+% and long anechoic IR (also without massage)
+
+z = repmat(0,round(100/dt),1); % 100 ms of zeros
+hwz = [ hw ; z ];  % pad zeros to windowed IR
+twz = [0:length(hwz)-1]*dt;
+[mag2,phase2,f2,unit_mag] = mataa_IR_to_FR(hwz,twz/1000,[],'Pa');
+k1 = find(f2 >= f(1)); % proper data
+k2 = find(f2 <= f(1)); % "fake" low-frequency part
+k2 = unique([k1(1) ; k2]);
+
+% reference anechoic:
+k = find(t0 < 15.51); 
+t0 = t0(k);
+h0 = h0(k);
+[mag0,phase0,f0,unit_mag] = mataa_IR_to_FR(h0,t0/1000,[],'Pa');
+
+[figh, siz, fontsiz] = plot_defaults([7,5],14); 
+u1 = stairs (f0-f0(1)/2, mag0); hold on % long IR (tower measurement) / reference
+u2 = stairs (f-f(1)/2, mag); hold on % gated/short IR
+alpha = 0.4;
+set (u2, 'color', [alpha alpha 1], 'linewidth', lw);
+set (u1, 'color', [1 alpha alpha], 'linewidth', lw);
+% plot(f, mag, 'b.', 'markersize', ms)
+% plot(f0, mag0, 'r.', 'markersize', ms)
+plot (f2(k1), mag2(k1), 'k-', f2(k2), mag2(k2), 'k--'); % processed response
+axis([30 22e3 40 100])
+set (gca, 'xscale', 'log');
+
+set(gca,'xtick',[0.1 0.3 1 3 10 30 100 300 1000 3000 10000 30000]);
+xt = get(gca,'xticklabel');
+xt = strrep(xt,'10^{-2}','0.01');
+xt = strrep(xt,'10^{-1}','0.1');
+xt = strrep(xt,'10^{0}','1');
+xt = strrep(xt,'10^{1}','10');
+xt = strrep(xt,'10^{2}','100');
+xt = strrep(xt,'3x0.1','0.3');
+xt = strrep(xt,'3x1','3');
+xt = strrep(xt,'3x10','30');
+xt = strrep(xt,'10^{3}','1k');
+xt = strrep(xt,'30^{3}','3k');
+xt = strrep(xt,'10^{4}','10k');
+xt = strrep(xt,'30^{4}','30k');
+set(gca,'xticklabel',xt);
+
+xlabel ("Frequency (Hz)");
+ylabel ("SPL (dB-SPL)");
+
+
+print ("FIGURE5.pdf", "-dpdf")
 
