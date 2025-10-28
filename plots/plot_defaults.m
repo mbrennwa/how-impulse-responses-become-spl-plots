@@ -12,5 +12,4 @@ function [figh, siz, fontsiz] = plot_defaults(siz, fontsiz)
 	set (0, "DefaultLineLineWidth", 1.5);
 	set (0, "DefaultAxesLineWidth", 1.5);
 	set (0, "DefaultAxesFontSize", fontsiz);
-	set (0, "defaultlinelinewidth", 1.5)
 	figh = figure();

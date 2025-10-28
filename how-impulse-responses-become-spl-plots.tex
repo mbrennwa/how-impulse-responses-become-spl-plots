@@ -109,8 +109,7 @@ The resulting waveform, $h(t)$, is the impulse response, expressed in sound pres
 
 Imagine the measurement of the impulse response were carried out in an anechoic environment. The resulting impulse response would capture the complete acoustic behaviour of the loudspeaker (\figr{FIGURE1}-B): every resonance, reflection, and delay leaves its fingerprint in $h(t)$. Early peaks correspond to the direct sound from the driver, and later ripples often indicate cabinet or cone resonances, which at some point dye off in the noise floor of the measurement.
 
-[ADD ROOM ECHOES]
-In practice, most measurements cannot be carried out in a perfectly anechoic environment. The sound radiated from the speaker gets reflected at the floor, walls and ceiling of the room, and furniture or other objects. These reflections show up in the measurement as small wiggles after the main peak of the direct sound from the speaker (\figr{FIGURE1}-C).
+In practice, however, measurements usually cannot be carried out in a perfectly anechoic environment. The sound radiated from the speaker gets reflected at the floor, the ceiling and the walls of the room, and furniture or other objects. These reflections show up in the measurement as small wiggles after the main peak of the direct sound from the speaker (\figr{FIGURE1}-C).
 
 \begin{figure}[tbp]
   \begin{center}
@@ -120,21 +119,34 @@ In practice, most measurements cannot be carried out in a perfectly anechoic env
   \end{center}
 \end{figure}
 
-\section{From impulse response to the SPL curve: gating and window functions (reality bites!)}
+\section{From impulse response to the SPL curve: gating (reality bites!)}
 
 We have seen how a single measurement of the impulse response contains everything needed to determine a loudspeaker’s acoustic behaviour.
-But before Fourier-transforming the time-domain measurement, let's take a closer look at \figr{FIGURE1}-C: the beginning of the impulse-response measurement (green) represents the flight time of the sound from the loudspeaker to the microphone and contains no useful information about the loudspeaker itself.
-The initial part of the impulse response (blue) shows the direct sound from the loudspeaker.
-After the arrival of the first echoes, the direct signal becomes masked by reflections from the room.
+But, before applying the Fourier transfor to the time-domain measurement, let's take a closer look at \mbox{\figr{FIGURE1}-C}:
+\begin{itemize}
+\item The beginning of the impulse-response measurement (green, 0--\SI{3.08}{ms}) represents the flight time of the sound from the loudspeaker to the microphone and contains no useful information about the loudspeaker itself.
+\item The initial part of the impulse response (blue, 3.08--\SI{6.23}{ms}) shows the clean, direct sound from the loudspeaker.
+\item After the arrival of the first echo at \SI{6.23}{ms}, the direct signal becomes masked by reflections from the room.
 This echoic part of the signal (red) still contains the loudspeaker’s output, but it can no longer be used to assess the loudspeaker’s own behaviour.
+\end{itemize}
 
-Only the anechoic segment of the impulse response can therefore be used to characterise the loudspeaker’s behaviour under anechoic conditions. The flight-time and echoic parts of the impulse-response measurement are discarded, in other words, the impulse response is gated to its anechoic part. The Fourier transform of this gated impulse response then yields the amplitude coefficients $A_j$, and hence the loudspeaker’s clean, anechoic SPL data in units of dB-SPL:
+Only the anechoic segment of the impulse response can therefore be used to characterise the loudspeaker’s behaviour under anechoic conditions. The flight-time and echoic parts of the impulse-response measurement are discarded. In other words, the impulse response is gated to its anechoic part. The Fourier transform of this gated impulse response then yields the amplitude coefficients $A_j$, and hence the loudspeaker’s clean, anechoic SPL data in units of dB-SPL:
 \[
 \mathrm{SPL}(f_j) = 20 \log_{10}\left( \frac{A_j / \sqrt{2}}{\pRef} \right)
 \]
-where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure. \figr{FIGURE2} shows the SPL curve determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The curve may not look very pretty and the staircase display may seem awkward. This is intentional and relates to the great power of the method -- which also comes with great responsibility, as \secn{GoodBadUgly} will make clear.
+where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure.
 
-[FIGURE2: SHOW THE SPL CURVE FROM THE BLUE PART IN FIGURE1.]
+\figr{FIGURE2} shows the SPL data determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The number of time-domain data points in the anechoic segment is $N = 140$. The frequency-domain data contains the same number of data points, split between amplitude ($A_j$) and phase ($\varphi_i$) coefficients (see \secn{Fourier_Theory}). The anechoic time-domain segment is $T = \SI{3.15}{ms}$ long, so the lowest frequency ($f_1$) and the width of the frequency bins ($\Delta f$) determined as $1/T \approx \SI{317}{Hz}$. The ``rough'' presentation of the SPL data in \figr{FIGURE2} may seem awkward, but it clearly exposes the limits of the method with respect to the low-frequency extension and frequency resolution (bin width) of the SPL data.
+
+\begin{figure}[tbp]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{FIGURE2}
+    \caption{SSPL data determined from the anechoic part of the impulse response in \figr{FIGURE1} (see text). The dots show the frequency-domain data ($\mathrm{SPL}(f_j)$ and $\varphi_j$). The stair steps indicate the frequency bin width ($\Delta f$), which is constant across the entire plot but appears distorted due to the logarithmic scaling of the frequency axis.}
+    \figlabel{FIGURE2}
+  \end{center}
+\end{figure}
+
+The following sections discuss some commonly used techniques used to tweak the anechoic data or to make it look prettier -- but remember: \emph{looks can be deceiving!}
 
 
 \section{Dealing with reality: The Good, the Bad, and the Ugly}

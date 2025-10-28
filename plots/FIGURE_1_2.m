@@ -5,7 +5,7 @@ pkg load signal
 
 clear all; close all;
 
-graphics_toolkit("gnuplot")
+graphics_toolkit("qt")
 
 % Figure 1: time domain:
 [figh, siz, fontsiz] = plot_defaults([7,9],14); 
@@ -39,7 +39,7 @@ set(gca, 'XTickLabel', []);
 
 % Panel C: Speaker response (no echo)
 randn("seed", 1234);  % for reproducible random numbers (when replotting)
-delay1 = 3.31; % echo delay (ms)
+delay1 = 3.15; % echo delay (ms)
 ndelay1 = round(delay1/1000*x.fs);
 echo1 = h(1:end-ndelay1);
 echo1 = [ zeros(ndelay1,1) ; h(1:end-ndelay1)];
@@ -75,25 +75,43 @@ t = t(k2); h = h(k2); % anechoic IR
 
 t = t-t(1); % rebase time to beginning of IR
 
+
+disp(sprintf('Anechoic signal data points = %i',length(h)))
+
+
 disp(sprintf('Anechoic signal length = %g ms',t(end)-t(1)))
 
 [mag,phase,f,unit_mag] = mataa_IR_to_FR(h,t/1000,[],'Pa');
 
 disp(sprintf('f_1 = Delta-f =  %g Hz',f(1)))
 
-f = f/1000; % convert to kHz
+% f = f/1000; % convert to kHz
 phase = mod(phase + 180, 360) - 180; % wrap to +180...-180
 [ax, h1, h2] = plotyy (f-f(1)/2, mag, f-f(1)/2, phase, @stairs, @stairs);
+
+% set light colors for the stairs lines:
+alpha = 0.8; lw = 2;
+set (h1, 'color', [alpha alpha 1], 'linewidth', lw);
+set (h2, 'color', [1 alpha alpha], 'linewidth', lw);
+
+% data points as dots:
+ms = 14;
+hold(ax(1), "on")
+plot(ax(1), f, mag, 'b.', 'markersize', ms)
+
+hold(ax(2), "on")
+plot(ax(2), f, phase, 'r.', 'markersize', ms)
+
 set(ax,'xscale','log');
 set(ax, "YColor", [0 0 0]);    % y-axis color (left and right)
 set(ax, "XColor", [0 0 0]);    % x-axis color (applies to both)
 
-ylim(ax(1), [50 100])      % left y-axis limits
+ylim(ax(1), [40 100])      % left y-axis limits
 ylim(ax(2), [-180 180])     % right y-axis limits
 set(ax(1),'ytick',[0:10:200]);
 set(ax(2),'ytick',[-180:90:180]);
-xlim(ax(1), [0.1 30])      % sets the x-axis range
-set(ax,'xtick',[0.1 0.3 1 3 10 30]);
+xlim(ax(1), [100 30e3])      % sets the x-axis range
+set(ax,'xtick',[0.1 0.3 1 3 10 30 100 300 1000 3000 10000 30000]);
 xt = get(ax,'xticklabel'){1};
 xt = strrep(xt,'10^{-2}','0.01');
 xt = strrep(xt,'10^{-1}','0.1');
@@ -103,13 +121,22 @@ xt = strrep(xt,'10^{2}','100');
 xt = strrep(xt,'3x0.1','0.3');
 xt = strrep(xt,'3x1','3');
 xt = strrep(xt,'3x10','30');
+xt = strrep(xt,'10^{3}','1000');
+xt = strrep(xt,'30^{3}','3000');
+xt = strrep(xt,'10^{4}','10k');
+xt = strrep(xt,'30^{4}','30k');
 set(ax,'xticklabel',xt);
 
+yt = get(ax(2),'yticklabel');
+for k = 1:length(yt)
+	yt{k} = sprintf('%s°', yt{k});
+end
+set(ax(2),'yticklabel',yt);
 
 
 xlabel ("Frequency (kHz)");
 ylabel (ax(1), "SPL (dB-SPL)");
-ylabel (ax(2), "Phase (degrees)");
+ylabel (ax(2), "Phase");
 
 print ("FIGURE2.pdf", "-dpdf")
 
