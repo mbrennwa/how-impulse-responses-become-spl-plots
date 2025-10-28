@@ -150,38 +150,8 @@ The following sections discuss some commonly used techniques used to tweak the a
 
 The relationships described in \secn{Fourier_Theory} define the fundamental, mathematical rules on which the Fourier transform operates. However, real-world measurements have a tendency to not play nice with these rules, which is why techniques to reduce frequency leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
-\subsection{Is the gated impulse response periodic?}
 
-\figr{FIGURE3} shows the implied periodic signal underlying the Fourier transform (see \secn{Fourier_periodic}). As discussed in \secn{Fourier_Theory}, the discrete Fourier transform implicitly assumes that the time-domain signal repeats itself endlessly. In reality, however, a gated impulse response ends abruptly, and its start and end points rarely match. When the signal is treated as periodic, this mismatch produces a small step between the end of one cycle and the beginning of the next.
-
-\begin{figure}[tbp]
-  \begin{center}
-    \includegraphics[width=\textwidth]{FIGURE3}
-    \caption{Periodic expansion (grey) of the gated impulse response (black) as implied by the discrete Fourier transform.}
-    \figlabel{FIGURE3}
-  \end{center}
-\end{figure}
-
-This sharp discontinuity has consequences in the frequency domain. The abrupt jump acts like a sudden transition in the waveform, which the Fourier transform represents as additional high-frequency content. These components do not exist in the sound radiated by the loudspeaker. They are artefacts of how the truncated signal is interpreted, not of the measurement itself.
-
-A common way to reduce this effect is to apply a window function to the gated impulse response before taking the Fourier transform. The idea is simple: smooth the end of the signal so that it gently approaches the same value as the beginning, which is typically close to zero within the background noise. This removes or softens the artificial step that would otherwise appear at the boundary of the periodic signal. Different window shapes exist, but they all serve the same purpose: make the transition between start and end continuous enough for the Fourier transform to behave well.
-
-[ADD A FIGURE SHOWING THE WINDOWING EFFECT]
-
-While this technique reduces unwanted high-frequency artefacts and makes the SPL curve look cleaner, it also modifies the data. The window attenuates the tail of the impulse response and therefore attenuates, or even removes, some of the valid information contained there. The result may be visually smoother but is no longer a perfectly faithful representation of the original measurement.
-
-In summary, windowing helps the impulse response conform to the assumptions of the Fourier transform and suppresses artefacts caused by the artificial periodic continuation. However, it must be used with care: it clarifies the true behaviour of the loudspeaker only as long as it does not erase the very details that describe it.
-
-
-
-
-
-
-
-
-
-
-\subsection{Is the gated impulse response periodic?}
+\subsection{Is the gated impulse response periodic?}\seclabel{windowing}
 
 \figr{FIGURE3} shows the implied periodic signal underlying the Fourier transform (see \secn{Fourier_periodic}). As discussed in \secn{Fourier_Theory}, the discrete Fourier transform implicitly assumes that the time-domain signal repeats itself endlessly. In reality, however, a gated impulse response ends abruptly, and its start and end points rarely match. When the signal is treated as periodic, this mismatch produces a small step between the end of one cycle and the beginning of the next.
 
@@ -195,7 +165,7 @@ In summary, windowing helps the impulse response conform to the assumptions of t
 
 This sharp discontinuity has consequences in the frequency domain. The abrupt jump acts like a sudden transition in the waveform, which the Fourier transform represents as additional high-frequency content. These components do not pertain to the loudspeaker; they are artefacts of how the truncated signal is interpreted, not of the measurement itself.
 
-A common way to reduce this effect is to apply a window function\footnote{There is a whole zoo of window functions, but their individual characteristics are beyond the scope of this document.} to the gated impulse response before taking the Fourier transform (\figr{FIGURE4}). The idea is simple: smooth the end of the signal so that it gently approaches the same value as the beginning, which is typically close to zero within the background noise. This removes or softens the artificial step that would otherwise appear at the boundary of the periodic signal. Various window shapes exist, but they all serve the same purpose: to make the transition between start and end continuous enough for the Fourier transform to behave well.
+A common way to reduce this effect is to apply a window function\footnote{There is a whole zoo of window functions, but their individual characteristics are beyond the scope of this document.} to the gated impulse response before taking the Fourier transform (\figr{FIGURE4}). The idea is simple: smooth the end of the signal so that it gently approaches the same value as the beginning, which is typically close to zero within the background noise. This removes or softens the artificial step that would otherwise appear at the boundary of the periodic signal.
 
 \begin{figure}[tbp]
   \begin{center}
@@ -210,7 +180,7 @@ Although windowing reduces unwanted high-frequency artefacts and yields a cleane
 In summary, windowing helps the impulse response conform to the assumptions of the Fourier transform and suppresses artefacts caused by the artificial periodic continuation. However, it must be used with care: it clarifies the true behaviour of the loudspeaker only as long as it does not erase the very details that describe it.
 
 
-\subsection{Is the gated impulse respnose too short?}
+\subsection{Is the gated impulse respnose too short?}\seclabel{zeropadding}
 The example in \secn{from_IR_to_SPL} has shown how the delay time of the first echo relative to the direct sound from the speaker limits the low-frequency extension and the frequency resolution of the anechoic response. 
 
 To extract more low-frequency information from the measurement, one would need to extend the gate time beyond the arrival of the first few echoes. However, this pollutes the loudspeaker signal with the room reflections and corrupts the anechoic SPL curve. 
@@ -222,22 +192,16 @@ There is no way to extract robust information on the anechoic response below $f_
 
 DISCUSS HERE. LF LIMIT $f_1$ and BIN WIDTH $\Delta f$.
 
-
+\subsection{Putting the pieces together: to good, the bad, and the ugly}
 [ADD AND DISCUSS A FIGURE COMPARING THE SPL CURVE FROM THE MASSAGED IR WITH THE ORIGINAL STAIRS CURVE (DO NOT SHOW PHASE FOR EASIER VIEWING). ALSO ADD A REFERENCE CURVE WITH THE SPL FROM THE FULL ANECHOIC RESPONSE IN FIGURE 1-B AS A 'TRUTH REFERENCE' FOR THE MASSAGED DATA.]
+Each step is an attempt to recover the true loudspeaker behaviour from a reflection-rich environment—but not all are equally honest.
 
-
-\begin{itemize}[noitemsep]
-    \item The following sections discuss how real-world processing shapes this transformation:
-    \begin{itemize}
-        \item \textbf{The Good:} gating and windowing to suppress reflections.
-        \item \textbf{The Bad:} excessive windowing that removes low-frequency content.
-        \item \textbf{The Ugly:} manipulation of data through zeroing, smoothing, or padding.
-    \end{itemize}
-    \item Each step is an attempt to recover the true loudspeaker behaviour from a reflection-rich environment—but not all are equally honest.
-\end{itemize}
-
-\vspace{1em}
-\noindent\rule{\textwidth}{0.4pt}\\
-\textit{This conceptual introduction explains how an impulse response represents a complete description of a loudspeaker’s behaviour. Later sections explore how this data is processed, interpreted, and occasionally abused.}
+\begin{figure}[tbp]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{FIGURE5}
+    \caption{SPL curve determined by windowing and zero-padding the gated impulse response (\secn{windowing} and \secn{zeropadding}, black curve), in comparsion to the gated response (same as in \figr{FIGURE2}, blue) and the anechoic response (\figr{FIGURE1}-B, red) for reference.}
+    \figlabel{FIGURE5}
+  \end{center}
+\end{figure}
 
 \end{document}
