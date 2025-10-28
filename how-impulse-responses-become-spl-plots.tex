@@ -67,7 +67,7 @@ Note that the total number of coefficients $A_j$ (including $A_0$) and $\varphi_
 
 Overall, the time-domain data describe how the signal evolves over time, while the frequency-domain data represent the same signal in terms of its amplitude and phase distribution across frequencies. Both domains contain precisely the same information; they just provide different representations of the very same signal.
 
-\subsection{Periodic signals!}
+\subsection{Periodic signals!}\seclabel{Fourier_periodic}
 An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N \time \tau$.  
 This follows directly from the use of cosine function in the above Fourier expansion, which is inherently periodic. The representation of the discrete time-domain data $x_i$ as a sum of cosines implies that this signal repeats indefinitely for $t < 0$ and $t > T$.  
 However, in many practical cases the measured signal is not actually periodic (e.g., the impulse response discussed in \secn{impulse_response}. This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions. In the frequency domain, this discontinuity appears as additional spectral content (spectral leakage).
@@ -147,11 +147,11 @@ The following sections discuss some commonly used techniques used to tweak the a
 
 
 \section{Fighting with reality: The Good, the Bad, and the Ugly}
-DISCUSS THE METHODS INTRODUCED IN PREVIOUS SECTIONS, DEMONSTRATE THEIR (AB)USE AND EFFECTS 
 
-The relationships described in \secn{Fourier_Theory} define the fundamental rules on which the Fourier transform operates. However, real-world measurements have a tendency to not play nice with these rules, which is why techniques to reduce frequency leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
+The relationships described in \secn{Fourier_Theory} define the fundamental, mathematical rules on which the Fourier transform operates. However, real-world measurements have a tendency to not play nice with these rules, which is why techniques to reduce frequency leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \subsection{Is the gated impulse response periodic?}
+When applying the Fourier transform to determine the SPL curve from the gated impulse response, the signal is assumed to be periodic (\secn{Fourier_periodic}). This is illustrated in \figr{FIGURE3}.
 DISCUSS HERE. WINDOW FUNCTIONS TO FORCE PERIODIC SIGNAL. attenuates/messes the tail of the impulse response, so data is changed or lost.
 
 

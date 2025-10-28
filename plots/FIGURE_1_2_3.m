@@ -140,3 +140,22 @@ ylabel (ax(2), "Phase");
 
 print ("FIGURE2.pdf", "-dpdf")
 
+
+% Figure 3: periodicity IR
+[figh, siz, fontsiz] = plot_defaults([7,3],14); 
+
+plot(t,1000*h,'k-'); hold on % IR data as used by the Fourier transform
+col = 0.6*[1 1 1];
+dt = (t(end)-t(1))/(length(t)-1);
+tt = t-2*(t(end)+dt);    plot(tt,1000*h,'color',col);
+tt = t-(t(end)+dt);    plot(tt,1000*h,'color',col);
+tt = t+t(end)+dt;      plot(tt,1000*h,'color',col);
+tt = t+2*(t(end)+dt);  plot(tt,1000*h,'color',col);
+tt = t+3*(t(end)+dt);  plot(tt,1000*h,'color',col);
+hold off
+axis([-5 8 r(3) r(4)]);
+xlabel ('Time (ms)')
+ylabel ('Pressure (mPa)')
+
+print ("FIGURE3.pdf", "-dpdf")
+
