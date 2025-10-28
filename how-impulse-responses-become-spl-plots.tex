@@ -52,7 +52,7 @@ f_j = \frac{F_s}{N}j, \quad j = 1, 2, \ldots, M,
 \]
 where \(M = (N - 1)/2\) if \(N\) is odd, or \(M = N/2 - 1\) if \(N\) is even.
 
-The discrete Fourier expansion is then written as:
+The discrete Fourier expansion is then written as a system of $N$ equations ($i = 1\ldots N$):
 \begin{align}
 \text{For odd } N:\quad
 x_i &= A_0 + \sum_{j=1}^{M} A_j \cos\!\big(2\pi f_j t_i + \varphi_j\big), \\[6pt]
@@ -61,19 +61,16 @@ x_i &= A_0 + \sum_{j=1}^{M} A_j \cos\!\big(2\pi f_j t_i + \varphi_j\big)
       + A_{N/2}\cos\!\big(\pi\, t_i / \tau\big).
 \end{align}
 
-Each amplitude–phase pair \((A_j, \varphi_j)\) represents one Fourier component at frequency \(f_j = jF_s/N\). The $A_0$ coefficient is the DC component of the $x_i$ data. Note that the total number of coefficients $A_j$ (including $A_0$) and $\varphi_j$ together equals \(N\). In other words, the number of data points in the frequency domain is the same as in the time domain. The above equations therefore represent a fully determined system. The coefficients \((A_j, \varphi_j)\) can be uniquely obtained from the measured samples \(x_i\) by solving this system, typically using efficient numerical algorithms such as the
-\emph{Fast Fourier Transform (FFT)}.
+Each amplitude–phase pair \((A_j, \varphi_j)\) represents one Fourier component at frequency \(f_j = jF_s/N\). The $A_0$ coefficient is the DC component of the $x_i$ data.
 
-Note that the Fourier transform is fully reversible. Given the frequency-domain data \((A_j, \varphi_j)\), the corresponding time-domain signal \(x_i\) can be reconstructed exactly using the same equations.  
-In other words, the time-domain data describe how the signal evolves over time, while the frequency-domain data represent the same signal in terms of its amplitude and phase distribution across frequencies. Both domains contain precisely the same information; they are simply two equivalent representations of the very same signal.
+Note that the total number of coefficients $A_j$ (including $A_0$) and $\varphi_j$ together equals \(N\), so the number of data points in the frequency domain is the same as in the time domain. The above equations therefore represent a fully determined system. The coefficients \((A_j, \varphi_j)\) can be uniquely obtained from the measured samples \(x_i\) by solving this system, typically using efficient numerical algorithms such as the \emph{Fast Fourier Transform (FFT)}. Also, the Fourier transform is fully reversible. Given the frequency-domain data \((A_j, \varphi_j)\), the corresponding time-domain signal \(x_i\) can be reconstructed exactly using the above equations.  
+
+Overall, the time-domain data describe how the signal evolves over time, while the frequency-domain data represent the same signal in terms of its amplitude and phase distribution across frequencies. Both domains contain precisely the same information; they just provide different representations of the very same signal.
 
 \subsection{Periodic signals!}
 An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N \time \tau$.  
-This follows directly from the use of sinusoidal functions, which are themselves periodic.  
-In other words, when representing the discrete time-domain data $x_i$ as a sum of sinusoidal waves, the discrete Fourier transform assumes that this pattern repeats indefinitely for $t < 0$ and $t > T$.  
-However, in many practical cases the measured signal is not actually periodic—for example, the impulse response discussed in \secn{impulse_response}.  
-This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions.  
-In the frequency domain, that discontinuity appears as additional spectral content (spectral leakage).
+This follows directly from the use of cosine function in the above Fourier expansion, which is inherently periodic. The representation of the discrete time-domain data $x_i$ as a sum of cosines implies that this signal repeats indefinitely for $t < 0$ and $t > T$.  
+However, in many practical cases the measured signal is not actually periodic (e.g., the impulse response discussed in \secn{impulse_response}. This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions. In the frequency domain, this discontinuity appears as additional spectral content (spectral leakage).
 
 \subsection{Where did the other frequencies go?}
 In practice, most real-world signals are not composed of a finite set of perfectly aligned frequencies $f_j$.  
@@ -102,12 +99,12 @@ Early peaks correspond to the direct sound from the driver, later ripples often 
 
 \section{The impulse response and its Fourier transform}
 
-Imagine a test signal that contains all frequencies at once, each with the same amplitude and zero phase; that is, $A_j = 1$ and $\varphi_j = 0$ for all $j = 1, \ldots, M$, together with a DC component $A_0 = 1$ (and for even $N$, a Nyquist component $A_{N/2} = 1$). When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $x_1 = N$ and $x_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
+Consider a test signal that contains all frequencies at once, each with the same amplitude and zero phase: $A_j = 1$ and $\varphi_j = 0$ for all $j =$. When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $x_1 = N$ and $x_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
 
 If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time ((\figr{FIGURE1}).  
 The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time (\figr{FIGURE1}-B). Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies—revealing its deviation from a perfectly flat, ideal response.\footnote{In practice, a very large impulse is required to achieve a good signal-to-noise ratio of the measurement. Most measurement tools therefore do \emph{not} use a Dirac impulse to determine the impulse-response, but rely on maximum-length sequences, broadband noise, or sine sweeps to excite the loudspeaker. The recorded loudspeaker response is the deconvolved from the test signal to obtain the impulse response. The result is the same as in our thought experiment, but with less measurement noise.}
 
-Imagine the measurement of the impulse response were carried out in an anechoic environment. The resulting impulse response would capture the complete acoustic behaviour of the loudspeaker (\figr{FIGURE1}-B): every resonance, reflection, and delay leaves its fingerprint in $h(t)$. Early peaks correspond to the direct sound from the driver, and later ripples often indicate cabinet or cone resonances, which at some point dye off in the noise floor of the measurement.
+Imagine the measurement of the impulse response were carried out in an anechoic environment. The resulting impulse response would capture the complete acoustic behaviour of the loudspeaker (\figr{FIGURE1}-B):\footnote{These data were measured outdoors in an empty space, with the loudspeaker and the microphone elevated high above the ground to keep away sound reflections from the floor.} every resonance, reflection, and delay leaves its fingerprint in $h(t)$. Early peaks correspond to the direct sound from the driver, and later ripples often indicate cabinet or cone resonances, which at some point dye off in the noise floor of the measurement.
 
 In practice, however, measurements usually cannot be carried out in a perfectly anechoic environment. The sound radiated from the speaker gets reflected at the floor, the ceiling and the walls of the room, and furniture or other objects. These reflections show up in the measurement as small wiggles after the main peak of the direct sound from the speaker (\figr{FIGURE1}-C).
 
@@ -119,7 +116,7 @@ In practice, however, measurements usually cannot be carried out in a perfectly 
   \end{center}
 \end{figure}
 
-\section{From impulse response to the SPL curve: gating (reality bites!)}
+\section{From a real-world impulse response to the SPL curve: time gating (reality bites!)}\secref{from_IR_to_SPL}
 
 We have seen how a single measurement of the impulse response contains everything needed to determine a loudspeaker’s acoustic behaviour.
 But, before applying the Fourier transfor to the time-domain measurement, let's take a closer look at \mbox{\figr{FIGURE1}-C}:
@@ -130,9 +127,9 @@ But, before applying the Fourier transfor to the time-domain measurement, let's 
 This echoic part of the signal (red) still contains the loudspeaker’s output, but it can no longer be used to assess the loudspeaker’s own behaviour.
 \end{itemize}
 
-Only the anechoic segment of the impulse response can therefore be used to characterise the loudspeaker’s behaviour under anechoic conditions. The flight-time and echoic parts of the impulse-response measurement are discarded. In other words, the impulse response is gated to its anechoic part. The Fourier transform of this gated impulse response then yields the amplitude coefficients $A_j$, and hence the loudspeaker’s clean, anechoic SPL data in units of dB-SPL:
+Only the anechoic segment of the impulse response can therefore be used to characterise the loudspeaker’s behaviour under anechoic conditions. The flight-time and echoic parts of the impulse-response measurement are discarded. In other words, the impulse response is gated to its anechoic part. The Fourier transform of this gated impulse response then yields the amplitude coefficients $A_j$, and hence the loudspeaker’s clean, anechoic SPL data in units of dB-SPL is:
 \[
-\mathrm{SPL}(f_j) = 20 \log_{10}\left( \frac{A_j / \sqrt{2}}{\pRef} \right)
+\mathrm{SPL}(f_j) = 20 \log_{10}\left( \frac{A_j / \sqrt{2}}{\pRef} \right),
 \]
 where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure.
 
@@ -149,17 +146,28 @@ where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure.
 The following sections discuss some commonly used techniques used to tweak the anechoic data or to make it look prettier -- but remember: \emph{looks can be deceiving!}
 
 
-\section{Dealing with reality: The Good, the Bad, and the Ugly}
+\section{Fighting with reality: The Good, the Bad, and the Ugly}
 DISCUSS THE METHODS INTRODUCED IN PREVIOUS SECTIONS, DEMONSTRATE THEIR (AB)USE AND EFFECTS 
 
-% The relationships described in \secn{Fourier_Theory} define the discrete time and frequency grid on which the Fourier transform operates. Real-world signals rarely align perfectly with this grid, which is why techniques to reduce leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
-
-\subsection{Low-frequency extension and frequency-resolution of the SPL curve}
-DISCUSS HERE. LF LIMIT $f_1$ and BIN WIDTH $\Delta f$.
-
+The relationships described in \secn{Fourier_Theory} define the fundamental rules on which the Fourier transform operates. However, real-world measurements have a tendency to not play nice with these rules, which is why techniques to reduce frequency leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \subsection{Is the gated impulse response periodic?}
 DISCUSS HERE. WINDOW FUNCTIONS TO FORCE PERIODIC SIGNAL. attenuates/messes the tail of the impulse response, so data is changed or lost.
+
+
+\subsection{Is the gated impulse respnose too short?}
+The example in \secn{from_IR_to_SPL} has shown how the delay time of the first echo relative to the direct sound from the speaker limits the low-frequency extension and the frequency resolution of the anechoic response. 
+
+To extract more low-frequency information from the measurement, one would need to extend the gate time beyond the arrival of the first few echoes. However, this pollutes the loudspeaker signal with the room reflections and corrupts the anechoic SPL curve. 
+
+Another technique to increase the length of the anechoic segment of the impulse response is to pad it zeros. This results in a longer time-domain signal and thereby lowers the low-frequency limit of the frequency-domain data, but it does not magically recover the missing low-frequency information. The longer, zero-padded time-domain data also results in smaller frequency bins ($\Delta f$). The SPL curve will therefore CONTAIN MORE DATA POINTS / INTERPOLATION / BUT NO MAGIC INCREASE OF FREQUENCY RESOLUTION BECAUSE THE ZEROS DID NOT ADD ANY NEW NEW/MISSING INFORMATION TO THE SIGNAL.
+
+There is no way to extract robust information on the anechoic response below $f_1$.
+
+
+DISCUSS HERE. LF LIMIT $f_1$ and BIN WIDTH $\Delta f$.
+
+
 
 
 
