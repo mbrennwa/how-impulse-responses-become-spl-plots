@@ -151,8 +151,8 @@ The following sections discuss some commonly used techniques used to tweak the a
 The relationships described in \secn{Fourier_Theory} define the fundamental, mathematical rules on which the Fourier transform operates. However, real-world measurements have a tendency to not play nice with these rules, which is why techniques to reduce frequency leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \subsection{Is the gated impulse response periodic?}
-\figr{FIGURE3} shows the implied periodic signal underlying the Fourier transform (see \secn{Fourier_periodic}). There is a small discontinuity at the transitions between the cycles. This sharp step in the periodic signal introduces spurious high-frequency content in the Fourier spectrum, which does not exist in the sound radiated by the speaker. 
-DISCUSS WINDOW FUNCTIONS TO FORCE PERIODIC SIGNAL. attenuates/messes the tail of the impulse response, so data is changed or lost.
+
+\figr{FIGURE3} shows the implied periodic signal underlying the Fourier transform (see \secn{Fourier_periodic}). As discussed in \secn{Fourier_Theory}, the discrete Fourier transform implicitly assumes that the time-domain signal repeats itself endlessly. In reality, however, a gated impulse response ends abruptly, and its start and end points rarely match. When the signal is treated as periodic, this mismatch produces a small step between the end of one cycle and the beginning of the next.
 
 \begin{figure}[tbp]
   \begin{center}
@@ -161,6 +161,55 @@ DISCUSS WINDOW FUNCTIONS TO FORCE PERIODIC SIGNAL. attenuates/messes the tail of
     \figlabel{FIGURE3}
   \end{center}
 \end{figure}
+
+This sharp discontinuity has consequences in the frequency domain. The abrupt jump acts like a sudden transition in the waveform, which the Fourier transform represents as additional high-frequency content. These components do not exist in the sound radiated by the loudspeaker. They are artefacts of how the truncated signal is interpreted, not of the measurement itself.
+
+A common way to reduce this effect is to apply a window function to the gated impulse response before taking the Fourier transform. The idea is simple: smooth the end of the signal so that it gently approaches the same value as the beginning, which is typically close to zero within the background noise. This removes or softens the artificial step that would otherwise appear at the boundary of the periodic signal. Different window shapes exist, but they all serve the same purpose: make the transition between start and end continuous enough for the Fourier transform to behave well.
+
+[ADD A FIGURE SHOWING THE WINDOWING EFFECT]
+
+While this technique reduces unwanted high-frequency artefacts and makes the SPL curve look cleaner, it also modifies the data. The window attenuates the tail of the impulse response and therefore attenuates, or even removes, some of the valid information contained there. The result may be visually smoother but is no longer a perfectly faithful representation of the original measurement.
+
+In summary, windowing helps the impulse response conform to the assumptions of the Fourier transform and suppresses artefacts caused by the artificial periodic continuation. However, it must be used with care: it clarifies the true behaviour of the loudspeaker only as long as it does not erase the very details that describe it.
+
+
+
+
+
+
+
+
+
+
+\subsection{Is the gated impulse response periodic?}
+
+\figr{FIGURE3} shows the implied periodic signal underlying the Fourier transform (see \secn{Fourier_periodic}). As discussed in \secn{Fourier_Theory}, the discrete Fourier transform implicitly assumes that the time-domain signal repeats itself endlessly. In reality, however, a gated impulse response ends abruptly, and its start and end points rarely match. When the signal is treated as periodic, this mismatch produces a small step between the end of one cycle and the beginning of the next.
+
+\begin{figure}[tbp]
+  \begin{center}
+    \includegraphics[width=\textwidth]{FIGURE3}
+    \caption{Periodic expansion (grey) of the gated impulse response (black) as implied by the discrete Fourier transform.}
+    \figlabel{FIGURE3}
+  \end{center}
+\end{figure}
+
+This sharp discontinuity has consequences in the frequency domain. The abrupt jump acts like a sudden transition in the waveform, which the Fourier transform represents as additional high-frequency content. These components do not pertain to the loudspeaker; they are artefacts of how the truncated signal is interpreted, not of the measurement itself.
+
+A common way to reduce this effect is to apply a window function\footnote{There is a whole zoo of window functions, but their individual characteristics are beyond the scope of this document.} to the gated impulse response before taking the Fourier transform. The idea is simple: smooth the end of the signal so that it gently approaches the same value as the beginning, which is typically close to zero within the background noise. This removes or softens the artificial step that would otherwise appear at the boundary of the periodic signal. Various window shapes exist, but they all serve the same purpose: to make the transition between start and end continuous enough for the Fourier transform to behave well.
+
+[ADD A FIGURE SHOWING THE WINDOWING EFFECT]
+
+Although windowing reduces unwanted high-frequency artefacts and yields a cleaner-looking SPL curve, it inevitably modifies the data. The window attenuates the tail of the impulse response and therefore weakens, or even removes, some of the valid information contained there. The result may be visually smoother but is no longer a perfectly faithful representation of the original measurement.
+
+In summary, windowing helps the impulse response conform to the assumptions of the Fourier transform and suppresses artefacts caused by the artificial periodic continuation. However, it must be used with care: it clarifies the true behaviour of the loudspeaker only as long as it does not erase the very details that describe it.
+
+
+
+
+
+
+
+
 
 
 

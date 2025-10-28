@@ -159,3 +159,36 @@ ylabel ('Pressure (mPa)')
 
 print ("FIGURE3.pdf", "-dpdf")
 
+
+
+% Figure 4: IR windowing
+[figh, siz, fontsiz] = plot_defaults([6,4],14); 
+
+L = round(length(t)/1.5); % taper length
+w = [ repmat(1,length(t)-L,1); 0.5*cos([0:L-1]'/(L-1)*pi)+0.5];
+
+[ax, h1, h2] = plotyy(t,1000*h, t,100*w); % h(t) before windowing and w(t) on second axis
+set(h1, 'color', col);
+hold(ax(1),'on');
+plot(ax(1), t,1000*h.*w,'color','k'); % h(t) after windowing
+
+ylim(ax(1), [r(3) r(4)]);
+
+% align zero point of right y axis with the one on the left
+yl1 = ylim(ax(1)); yl2 = ylim(ax(2));
+frac = (0 - yl1(1)) / diff(yl1);
+new_yl2_1 = yl2(2) - (yl2(2) - 0) / (1 - frac);
+ylim(ax(2), 1.1*[new_yl2_1 yl2(2)]);
+set(ax, "YColor", 'k' , 'xtick', [0:1:10]); 
+set(ax(2), 'ytick', [0 50 100]);    % y-axis color (left and right)
+lbl = get(ax(2), 'yticklabel');
+for i = 1:length(lbl)
+	lbl{i} = sprintf('%s%%',lbl{i});
+end
+set(ax(2), 'yticklabel', lbl);
+
+xlabel ('Time (ms)')
+ylabel ('Pressure (mPa)')
+
+print ("FIGURE4.pdf", "-dpdf")
+
