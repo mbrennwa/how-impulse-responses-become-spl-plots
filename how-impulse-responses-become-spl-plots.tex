@@ -116,7 +116,7 @@ In practice, however, measurements usually cannot be carried out in a perfectly 
   \end{center}
 \end{figure}
 
-\section{From a real-world impulse response to the SPL curve: time gating (reality bites!)}\secref{from_IR_to_SPL}
+\section{From a real-world impulse response to its SPL curve: time gating (reality bites!)}\seclabel{from_IR_to_SPL}
 
 We have seen how a single measurement of the impulse response contains everything needed to determine a loudspeaker’s acoustic behaviour.
 But, before applying the Fourier transfor to the time-domain measurement, let's take a closer look at \mbox{\figr{FIGURE1}-C}:
@@ -138,7 +138,7 @@ where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure.
 \begin{figure}[tbp]
   \begin{center}
     \includegraphics[width=0.7\textwidth]{FIGURE2}
-    \caption{SSPL data determined from the anechoic part of the impulse response in \figr{FIGURE1} (see text). The dots show the frequency-domain data ($\mathrm{SPL}(f_j)$ and $\varphi_j$). The stair steps indicate the frequency bin width ($\Delta f$), which is constant across the entire plot but appears distorted due to the logarithmic scaling of the frequency axis.}
+    \caption{SPL data determined from the anechoic part of the impulse response in \figr{FIGURE1} (see text). The dots show the frequency-domain data ($\mathrm{SPL}(f_j)$ and $\varphi_j$). The stair steps indicate the frequency bin width ($\Delta f$), which is constant across the entire plot but appears distorted due to the logarithmic scaling of the frequency axis.}
     \figlabel{FIGURE2}
   \end{center}
 \end{figure}
@@ -151,8 +151,17 @@ The following sections discuss some commonly used techniques used to tweak the a
 The relationships described in \secn{Fourier_Theory} define the fundamental, mathematical rules on which the Fourier transform operates. However, real-world measurements have a tendency to not play nice with these rules, which is why techniques to reduce frequency leakage or to improve the visual appearance of and SPL curve are applied -- sometimes for the better, sometimes not.
 
 \subsection{Is the gated impulse response periodic?}
-When applying the Fourier transform to determine the SPL curve from the gated impulse response, the signal is assumed to be periodic (\secn{Fourier_periodic}). This is illustrated in \figr{FIGURE3}.
-DISCUSS HERE. WINDOW FUNCTIONS TO FORCE PERIODIC SIGNAL. attenuates/messes the tail of the impulse response, so data is changed or lost.
+\figr{FIGURE3} shows the implied periodic signal underlying the Fourier transform (see \secn{Fourier_periodic}). There is a small discontinuity at the transitions between the cycles. This sharp step in the periodic signal introduces spurious high-frequency content in the Fourier spectrum, which does not exist in the sound radiated by the speaker. 
+DISCUSS WINDOW FUNCTIONS TO FORCE PERIODIC SIGNAL. attenuates/messes the tail of the impulse response, so data is changed or lost.
+
+\begin{figure}[tbp]
+  \begin{center}
+    \includegraphics[width=\textwidth]{FIGURE3}
+    \caption{Periodic expansion (grey) of the gated impulse response (black) as implied by the discrete Fourier transform.}
+    \figlabel{FIGURE3}
+  \end{center}
+\end{figure}
+
 
 
 \subsection{Is the gated impulse respnose too short?}
