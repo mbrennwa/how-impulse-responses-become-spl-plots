@@ -34,7 +34,7 @@ Understanding and visualising the SPL response is central to almost every aspect
 
 An intuitive approach to determine the SPL curve of a loudspeaker would be to play a sine wave with a given frequency at a time, measure the resulting sound pressure level (SPL), repeat the process at the next frequency, and plot the SPL results across frequency. However, this method is very time-consuming and works reliably only in an anechoic environment, as room reflections and echoes can severely distort the measurement. Modern techniques achieve the same result in a single measurement step: they excite the loudspeaker with a short, broadband signal and use the Fourier transform to reveal the frequency response from the measured time-domain data.
 
-This document introduces the concepts that link time-domain measurements (such as impulse responses) to frequency-domain data (such as SPL curves). It aims to provide a practical, intuitive explanation of what the Fourier transform does for loudspeaker measurements—and why understanding its limitations is just as important as applying it. Later sections explore both the strengths and the pitfalls of this process: the good, the bad, and occasionally the ugly.
+This document introduces the concepts that link time-domain measurements (such as impulse responses) to frequency-domain data (such as SPL curves). It aims to provide a practical, intuitive explanation of what the Fourier transform does for loudspeaker measurements, and why understanding the technique's limitations is just as important as applying it. Later sections explore both the strengths and the pitfalls of this process: the good, the bad, and occasionally the ugly.
 
 
 \section{Time domain vs.\ frequency domain: the Fourier transform}\seclabel{Fourier_Theory}
@@ -170,17 +170,17 @@ A common way to reduce this effect is to apply a window function\footnote{There 
 \begin{figure}[tbp]
   \begin{center}
     \includegraphics[width=0.7\textwidth]{FIGURE4}
-    \caption{Multiplying the gated impulse resonse (gray) with a window function (red) to make the impulse response periodic (black).}
+    \caption{Multiplying the gated impulse resonse (grey) with a window function (red) to make the impulse response periodic (black).}
     \figlabel{FIGURE4}
   \end{center}
 \end{figure}
 
-Although windowing reduces unwanted high-frequency artefacts and yields a cleaner-looking SPL curve, it inevitably modifies the data. The window attenuates the tail of the impulse response and therefore weakens, or even removes, some of the valid information contained there. The result may be visually smoother but is no longer a perfectly faithful representation of the original measurement.
+Although windowing reduces unwanted high-frequency artefacts and yields a cleaner-looking SPL curve, it inevitably modifies the data. The window attenuates the tail of the impulse response and therefore weakens, or even removes, some of the valid information contained there (\figr{FIGURE4}). The result may be visually smoother but is no longer a perfectly faithful representation of the original measurement data.
 
 In summary, windowing helps the impulse response conform to the assumptions of the Fourier transform and suppresses artefacts caused by the artificial periodic continuation. However, it must be used with care: it clarifies the true behaviour of the loudspeaker only as long as it does not erase the very details that describe it.
 
 
-\subsection{Is the gated impulse respnose too short?}\seclabel{zeropadding}
+\subsection{Is the gated impulse response too short?}\seclabel{zeropadding}
 The example in \secn{from_IR_to_SPL} has shown how the delay time of the first echo relative to the direct sound from the speaker limits the low-frequency extension and the frequency resolution of the anechoic response. 
 
 To extract more low-frequency information from the measurement, one would need to extend the gate time beyond the arrival of the first few echoes. However, this pollutes the loudspeaker signal with the room reflections and corrupts the anechoic SPL curve. 
