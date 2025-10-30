@@ -29,7 +29,7 @@
 
 Every loudspeaker designer or tinkerer wants to know how well their loudspeaker performs acoustically. Does it reproduce all frequencies evenly, or does it emphasise some and hide others? The answer lies in its SPL frequency response curve, which shows how loud the speaker is at each frequency.
 
-Understanding and visualising the SPL response is central to almost every aspect of loudspeaker design and evaluation—from developing new drivers to characterising enclosures and interpreting room interactions. The goal seems simple: determine how a loudspeaker responds to different frequencies. The challenge lies in doing so accurately and efficiently, without (unintended) cheating.
+Understanding and visualising the SPL response is central to almost every aspect of loudspeaker design and evaluation, from developing new drivers to characterising enclosures and interpreting room interactions. The goal seems simple: determine how a loudspeaker responds to different frequencies. The challenge lies in doing so accurately and efficiently, without (unintended) cheating.
 
 An intuitive approach to determine the SPL curve of a loudspeaker would be to play a sine wave with a given frequency at a time, measure the resulting sound pressure level (SPL), repeat the process at the next frequency, and plot the SPL results across frequency. However, this method is very time-consuming and works reliably only in an anechoic environment, as room reflections and echoes can severely distort the measurement. Modern techniques achieve the same result in a single measurement step: they excite the loudspeaker with a short, broadband signal and use the Fourier transform to reveal the frequency response from the measured time-domain data.
 
@@ -38,7 +38,7 @@ This document introduces the concepts that link time-domain measurements (such a
 
 \section{Time Domain vs.\ Frequency Domain: the Fourier Transform}\seclabel{Fourier_Theory}
 
-Consider a sound pressure signal evolving as a function of time, $x(t)$. The signal is recorded by a microphone and digitised by an A/D converter with sampling rate \(F_s\). As a result, we obtain $N$ discrete samples $x_i = x(t_i)$ at times
+Consider a sound pressure signal evolving as a function of time, $x(t)$. The signal is recorded by a microphone and digitised by an analogue-to-digital converter with sampling rate \(F_s\). As a result, we obtain $N$ discrete samples $x_i = x(t_i)$ at times
 \[
 t_i = (i-1) \times \tau, \qquad \tau = \frac{1}{F_s}, \quad i = 1, 2, \ldots, N.
 \]
@@ -69,7 +69,7 @@ Overall, the time-domain data describe how the signal evolves over time, while t
 \subsection{Periodic Signals!}\seclabel{Fourier_periodic}
 An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N \times \tau$.  
 This follows directly from the use of cosine functions in the above Fourier expansion, which are inherently periodic. The representation of the discrete time-domain data $x_i$ as a sum of cosines implies that this signal repeats indefinitely for $t < 0$ and $t > T$.  
-However, in many practical cases the measured signal is not actually periodic (e.g., the impulse response discussed in \secn{impulse_response}. This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions. In the frequency domain, this discontinuity appears as additional spectral content (spectral leakage).
+However, in many practical cases the measured signal is not actually periodic (e.g., the impulse response discussed in \secn{impulse_response}). This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions. In the frequency domain, this discontinuity appears as additional spectral content (spectral leakage).
 
 \subsection{Where Did the Other Frequencies Go?}
 In practice, most real-world signals are not composed of a finite set of perfectly aligned frequencies $f_j$.  
@@ -79,22 +79,22 @@ In the discrete Fourier transform, the available frequencies form equally spaced
 A signal whose frequency does not coincide with one of these discrete $f_j$ values will have its energy distributed over multiple bins, a phenomenon known as spectral leakage. While the total energy of the signal remains conserved, leakage can cause sharp spectral features to appear broadened or blurred across multiple frequency bins.
 
 Sampling also imposes two important frequency limits.  
-The lowest frequency present in the discrete Fourier transform ($f_1 = F_s/N$) is determined by the total length of the digitized signal, $T = N \times \tau$.  
+The lowest frequency present in the discrete Fourier transform ($f_1 = F_s/N$) is determined by the total length of the digitised signal, $T = N \times \tau$.  
 Because the bin width $\Delta f$ equals $f_1$, the signal duration also defines the frequency resolution of the time-domain data.  
-The highest resolvable frequency ($f_M = F_s \times M / N$) is determined by the sampling rate: according to the Nyquist theorem, no frequency above $F_s/2$ can be represented in the digitized data.  
+The highest resolvable frequency ($f_M = F_s \times M / N$) is determined by the sampling rate: according to the Nyquist theorem, no frequency above $F_s/2$ can be represented in the digitised data.  
 Any analogue signal components above this limit will be folded back (or ``aliased'') to appear as spurious lower-frequency components in the sampled data.
 
 
 \section{The Impulse Response and its Fourier Transform}\seclabel{impulse_response}
 
-Consider a test signal that contains all frequencies at once, each with the same amplitude and zero phase: $A_j = 1$ and $\varphi_j = 0$ for all $j =$. When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $x_1 = N$ and $x_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
+Consider a test signal that contains all frequencies at once, each with the same amplitude and zero phase: $A_j = 1$ and $\varphi_j = 0$ for all $j$. When such a spectrum is converted from the frequency domain to the time domain using the above Fourier expansion, the result is $x_1 = N$ and $x_{i=2\ldots N} = 0$, the discrete analogue of a Dirac delta. In other words, an ideal delta pulse contains all frequencies simultaneously and with equal amplitude and zero phase.
 
 If we now drive a loudspeaker with this impulse, the microphone records its acoustic output over time (\figr{FIGURE1}).  
-The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time (\mbox{\figr{FIGURE1}-B}). Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies—revealing its deviation from a perfectly flat, ideal response.\footnote{In practice, a very large impulse is required to achieve a good signal-to-noise ratio of the measurement. Most measurement tools therefore do \emph{not} use a Dirac impulse to determine the impulse-response, but rely on maximum-length sequences, broadband noise, or sine sweeps to excite the loudspeaker. The recorded loudspeaker response is then deconvolved from the test signal to obtain the impulse response. The result is the same as in our thought experiment, but with less measurement noise.}
+The resulting waveform, $h(t)$, is the impulse response, expressed in sound pressure (Pa) as a function of time (\mbox{\figr{FIGURE1}-B}). Because the input contains all frequencies equally, any variation in the measured response reflects how the loudspeaker modifies the amplitude and phase of those frequencies, revealing its deviation from a perfectly flat, ideal response.\footnote{In practice, a very large impulse is required to achieve a good signal-to-noise ratio of the measurement. Most measurement tools therefore do \emph{not} use a Dirac impulse to determine the impulse-response, but rely on maximum-length sequences, broadband noise, or sine sweeps to excite the loudspeaker. The recorded loudspeaker response is then deconvolved from the test signal to obtain the impulse response. The result is the same as in our thought experiment, but with less measurement noise.}
 
 Imagine the measurement of the impulse response were carried out in an anechoic environment. The resulting impulse response would capture the complete acoustic behaviour of the loudspeaker (\mbox{\figr{FIGURE1}-B}):\footnote{These data were measured outdoors in an empty space, with the loudspeaker and the microphone elevated high above the ground to keep away sound reflections from the floor.} every resonance, reflection, and delay leaves its fingerprint in $h(t)$. Early peaks correspond to the direct sound from the driver, and later ripples often indicate cabinet or cone resonances, which at some point die off in the noise floor of the measurement.
 
-In practice, however, measurements usually cannot be carried out in a perfectly anechoic environment. The sound radiated from the speaker gets reflected at the floor, the ceiling and the walls of the room, and furniture or other objects. These reflections show up in the measurement as small wiggles after the main peak of the direct sound from the speaker (\figr{FIGURE1}-C).
+In practice, however, measurements usually cannot be carried out in a perfectly anechoic environment. The sound radiated from the speaker gets reflected at the floor, the ceiling and the walls of the room, and furniture or other objects. These reflections show up in the measurement as small wiggles after the main peak of the direct sound from the speaker (\mbox{\figr{FIGURE1}-C}).
 
 \begin{figure}[tbp]
   \begin{center}
@@ -122,7 +122,7 @@ Only the anechoic segment of the impulse response can therefore be used to chara
 \]
 where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure.
 
-\figr{FIGURE2} shows the SPL data determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The number of time-domain data points in the anechoic segment is $N = 140$. The frequency-domain data contains the same number of data points, split between amplitude ($A_j$) and phase ($\varphi_i$) coefficients (see \secn{Fourier_Theory}). The anechoic time-domain segment is $T = \SI{3.15}{ms}$ long, so the lowest frequency ($f_1$) and the width of the frequency bins ($\Delta f$) determined to $f_1 = \Delta f = 1/T \approx \SI{317}{Hz}$. The ``rough'' presentation of the SPL data in \figr{FIGURE2} may seem awkward, but it clearly exposes the limits of the method with respect to the low-frequency extension and frequency resolution (bin width) of the SPL data.
+\figr{FIGURE2} shows the SPL data determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The number of time-domain data points in the anechoic segment is $N = 140$. The frequency-domain data contains the same number of data points, split between amplitude ($A_j$) and phase ($\varphi_j$) coefficients (see \secn{Fourier_Theory}). The anechoic time-domain segment is $T = \SI{3.15}{ms}$ long, so the lowest frequency ($f_1$) and the width of the frequency bins ($\Delta f$) are $f_1 = \Delta f = 1/T \approx \SI{317}{Hz}$. The ``rough'' presentation of the SPL data in \figr{FIGURE2} may seem awkward, but it clearly exposes the limits of the method with respect to the low-frequency extension and frequency resolution (bin width) of the SPL data.
 
 \begin{figure}[tbp]
   \begin{center}
@@ -132,12 +132,12 @@ where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure.
   \end{center}
 \end{figure}
 
-The following sections discuss some commonly used techniques used to tweak the anechoic data or to make it look prettier -- but always remember: \emph{looks can be deceiving!}
+The following sections discuss some commonly used techniques to tweak the anechoic data or to make it look prettier. But always remember: \emph{looks can be deceiving!}
 
 
 \section{Fighting with Reality: Working Around the Rules}
 
-The relationships described in \secn{Fourier_Theory} define the fundamental, mathematical rules on which the Fourier transform operates. However, real-world measurements have a tendency to not play nice with these rules, which is why techniques to reduce frequency leakage or to improve the visual appearance of an SPL curve are applied -- sometimes for the better, sometimes not.
+The relationships described in \secn{Fourier_Theory} define the fundamental, mathematical rules on which the Fourier transform operates. However, real-world measurements have a tendency to not play nice with these rules, which is why techniques to reduce frequency leakage or to improve the visual appearance of an SPL curve are applied; sometimes for the better, sometimes not.
 
 
 \subsection{Is the Gated Impulse Response Periodic?}\seclabel{windowing}
@@ -159,7 +159,7 @@ A common way to reduce this effect is to apply a window function\footnote{There 
 \begin{figure}[tbp]
   \begin{center}
     \includegraphics[width=0.7\textwidth]{FIGURE4}
-    \caption{Multiplying the gated impulse response (grey) by a window function (red) (black).}
+    \caption{Multiplying the gated impulse response (grey) by a window function (red) to obtain a quasi-periodic impulse response (black).}
     \figlabel{FIGURE4}
   \end{center}
 \end{figure}
