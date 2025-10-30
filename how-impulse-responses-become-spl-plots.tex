@@ -184,7 +184,7 @@ Always remember: there is no way to extract reliable information on the anechoic
 
 The computation of the anechoic SPL response of a loudspeaker involves a number of processing steps. Each step aims to recover the true behaviour of the loudspeaker from a measurement that is inevitably affected by room echoes and noise. Depending on how they are applied, some steps help to clarify the data, while others may risk distorting or disguising it.
 
-To illustrate this, let us revisit the SPL curve from \figr{FIGURE2} and examine what happens when the data are processed to make the curve appear smoother and visually more appealing. Specifically, we (i) apply a window function as shown in \figr{FIGURE4} and (ii) pad the resulting impulse response with \SI{0.1}{s} of zeros. The resulting SPL curve is shown in \figr{FIGURE5}, together with the original gated response (\figr{FIGURE2}) and the anechoic reference derived from the full \SI{15}{ms} impulse response (\mbox{\figr{FIGURE1}-B}), which represents the best available approximation of the “truth.”
+To illustrate this, let us revisit the SPL curve from \figr{FIGURE2} and examine what happens when the data are processed to make the curve appear smoother and visually more appealing. Specifically, we (i) apply a window function as shown in \figr{FIGURE4} and (ii) pad the windowed impulse response with \SI{0.1}{s} of zeros. The resulting SPL curve is shown in \figr{FIGURE5}, together with the original gated response (\figr{FIGURE2}) and the anechoic reference derived from the full \SI{15}{ms} impulse response (\mbox{\figr{FIGURE1}-B}), which represents the best available approximation of the “truth.”
 
 \begin{figure}[tbp]
   \begin{center}
