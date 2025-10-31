@@ -171,7 +171,7 @@ In summary, windowing helps the impulse response conform to the assumptions of t
 
 \subsection{Is the Gated Impulse Response too Short?}\seclabel{zeropadding}
 
-The example in \secn{from_IR_to_SPL} has shown how the delay time of the first echo relative to the direct sound from the speaker limits both the low-frequency extension and the frequency resolution of the anechoic response. These two quantities are linked: both depend on the total duration of the usable time-domain signal. A longer signal corresponds to a smaller lowest resolvable frequency $f_1 = 1/T$ and a finer frequency-bin spacing $\Delta f = 1/T$ in the Fourier domain.
+The example in \secn{from_IR_to_SPL} has shown how the delay time of the first echo relative to the direct sound from the speaker limits both the low-frequency extension and the frequency resolution of the anechoic response. These two quantities are linked: both depend on the total duration of the usable time-domain signal. A longer signal corresponds to a smaller lowest resolvable frequency and a finer frequency-bin spacing in the Fourier domain.
 
 To extract more low-frequency information from the measurement, one might be tempted to extend the gate time beyond the arrival of the first few echoes. However, this inevitably contaminates the loudspeaker signal with room reflections and corrupts the anechoic SPL curve, and is therefore not a viable solution.
 
