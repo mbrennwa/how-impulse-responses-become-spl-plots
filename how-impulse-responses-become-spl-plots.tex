@@ -67,20 +67,20 @@ Note that the total number of coefficients $A_j$ (including $A_0$) and $\varphi_
 Overall, the time-domain data describe how the signal evolves over time, while the frequency-domain data represent the same signal in terms of its amplitude and phase distribution across frequencies. Both domains contain precisely the same information; they just provide different representations of the very same signal.
 
 \subsection{Periodic Signals!}\seclabel{Fourier_periodic}
-An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T = N \times \tau$.  
-This follows directly from the use of cosine functions in the above Fourier expansion, which are inherently periodic. The representation of the discrete time-domain data $x_i$ as a sum of cosines implies that this signal repeats indefinitely for $t < 0$ and $t > T$.  
+An important (but often overlooked) aspect of the discrete Fourier transform is that it implicitly assumes the signal to be periodic with period $T_N = N \times \tau$, the duration of the $N$-sample record being transformed.  
+This follows directly from the use of cosine functions in the above Fourier expansion, which are inherently periodic. The representation of the discrete time-domain data $x_i$ as a sum of cosines implies that this signal repeats indefinitely for $t < 0$ and $t > T_N$.  
 However, in many practical cases the measured signal is not actually periodic (e.g., the impulse response discussed in \secn{impulse_response}). This assumption is not inherently a problem, but it does have consequences: if the start and end points of the time-domain data are not at the same amplitude, the implied periodic continuation introduces an artificial discontinuity at the boundary between repetitions. In the frequency domain, this discontinuity appears as additional spectral content (spectral leakage).
 
 \subsection{Where Did the Other Frequencies Go?}
 In practice, most real-world signals are not composed of a finite set of perfectly aligned frequencies $f_j$.  
 Instead, their spectral energy almost always lies between the discrete frequencies sampled by the Fourier transform.
 
-In the discrete Fourier transform, the available frequencies form equally spaced bins centered at the $f_j$, each with width $\Delta f = F_s/N = F_s \times \tau$.
+In the discrete Fourier transform, the available frequencies form equally spaced bins centered at the $f_j$, each with width $\Delta f = F_s/N = 1/T_N$.
 A signal whose frequency does not coincide with one of these discrete $f_j$ values will have its energy distributed over multiple bins, a phenomenon known as spectral leakage. While the total energy of the signal remains conserved, leakage can cause sharp spectral features to appear broadened or blurred across multiple frequency bins.
 
 Sampling also imposes two important frequency limits.  
-The lowest frequency present in the discrete Fourier transform ($f_1 = F_s/N$) is determined by the total length of the digitised signal, $T = N \times \tau$.  
-Because the bin width $\Delta f$ equals $f_1$, the signal duration also sets how finely the discrete Fourier transform samples the frequency axis.
+The lowest frequency present in the discrete Fourier transform ($f_1 = F_s/N = 1/T_N$, i.e.\ $f_j$ with $j = 1$) is determined by the record length $T_N$.  
+Because the bin width $\Delta f$ equals $f_1$, the record length also sets how finely the discrete Fourier transform samples the frequency axis.
 Zero-padding can later be used to evaluate the transform at more closely spaced frequencies, but as discussed in \secn{zeropadding}, that denser sampling does not increase the information contained in the time-domain data.
 The highest resolvable frequency ($f_M = F_s \times M / N$) is determined by the sampling rate: according to the Nyquist theorem, no frequency above $F_s/2$ can be represented in the digitised data.  
 Any analogue signal components above this limit will be folded back (or ``aliased'') to appear as spurious lower-frequency components in the sampled data.
@@ -123,7 +123,7 @@ Only the anechoic segment of the impulse response can therefore be used to chara
 \]
 where $\pRef = \SI{20}{\micro\pascal}$ is the SPL reference pressure.
 
-\figr{FIGURE2} shows the SPL data determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The number of time-domain data points in the anechoic segment is $N = 140$. The frequency-domain data contains the same number of data points, split between amplitude ($A_j$) and phase ($\varphi_j$) coefficients (see \secn{Fourier_Theory}). The anechoic time-domain segment is $T = \SI{3.15}{ms}$ long, so the lowest frequency ($f_1$) and the width of the frequency bins ($\Delta f$) are $f_1 = \Delta f = 1/T \approx \SI{317}{Hz}$. The ``rough'' presentation of the SPL data in \figr{FIGURE2} may seem awkward, but it clearly exposes the limits of the method with respect to the low-frequency extension ($f_1$) and the frequency-bin width ($\Delta f$) of the SPL data.
+\figr{FIGURE2} shows the SPL data determined from the anechoic part of the impulse response shown in \figr{FIGURE1}. The number of time-domain data points in the anechoic segment is $N = 140$. The frequency-domain data contains the same number of data points, split between amplitude ($A_j$) and phase ($\varphi_j$) coefficients (see \secn{Fourier_Theory}). The usable, uncontaminated segment has duration $T = \SI{3.15}{ms}$, which sets the practical low-frequency limit $f_{\min} = 1/T \approx \SI{317}{Hz}$. Without zero-padding, the transform record length equals the gate ($T_N = T$), so the lowest frequency and bin spacing are $f_1 = \Delta f = 1/T_N = f_{\min}$. The ``rough'' presentation of the SPL data in \figr{FIGURE2} may seem awkward, but it clearly exposes the practical limits set by the usable observation interval: the low-frequency limit ($f_{\min}$) and the frequency-bin width ($\Delta f$) of the gated SPL data (see also \secn{zeropadding}).
 
 \begin{figure}[tbp]
   \begin{center}
@@ -172,15 +172,13 @@ In summary, windowing helps the impulse response conform to the assumptions of t
 
 \subsection{Is the Gated Impulse Response too Short?}\seclabel{zeropadding}
 
-The example in \secn{from_IR_to_SPL} has shown how the delay time of the first echo relative to the direct sound from the speaker limits both the low-frequency extension ($f_1$) and the frequency-bin spacing ($\Delta f$) of the anechoic response. These two quantities are linked: both depend on the total duration of the usable time-domain signal. A longer signal corresponds to a smaller $f_1$ and a finer $\Delta f$ in the Fourier domain.
+The example in \secn{from_IR_to_SPL} has shown how the delay of the first echo relative to the direct sound limits the duration $T$ of the usable, uncontaminated loudspeaker impulse-response segment. At $T$ the measurement is truncated because room reflections arrive; the uncontaminated continuation after $T$ is therefore unknown. That finite observation interval sets the practical low-frequency limit $f_{\min} = 1/T$. Without zero-padding, the transform uses $T_N = T$, so the frequency-bin spacing equals the same value ($\Delta f = f_1 = 1/T_N = f_{\min}$). A longer usable segment corresponds to a smaller $f_{\min}$ and, for the unpadded transform, a finer $\Delta f$.
 
 To extract more low-frequency information from the measurement, one might be tempted to extend the gate time beyond the arrival of the first few echoes. However, this inevitably contaminates the loudspeaker signal with room reflections and corrupts the anechoic SPL curve, and is therefore not a viable solution.
 
-Another technique often used to make the anechoic segment appear longer is to artificially pad it with zeros. This yields a longer time-domain signal, a smaller FFT bin spacing $\Delta f$, and an SPL curve with more frequency points. It does not, however, add information about the loudspeaker. The measured information is the part of the impulse response that is not masked by noise or room echoes; zero-padding assumes a zero signal where we simply have no usable loudspeaker data.
+Another technique often used to make the anechoic segment appear longer is to artificially pad it with zeros. This yields a longer transform record ($T_N > T$), a smaller frequency-bin spacing $\Delta f = 1/T_N$, and an SPL curve with more frequency points. It does not, however, add measurement information. The measured information is the part of the impulse response that is not masked by noise or room echoes; zero-padding assumes a zero signal where we simply have no usable loudspeaker data.
 
-Zero-padding can make the bin spacing $\Delta f$ arbitrarily fine, but it does not increase the information contained in the gated measurement. What it does provide is denser sampling of the Fourier transform of that existing time-domain segment: the transform is evaluated at more closely spaced frequencies. At higher frequencies this can reveal spectral detail that already lived in the gated impulse response data, but fell between the original FFT bins, so the plotted SPL curve tracks that detail more closely. At low frequencies, however, the spectral detail that can be extracted from the impulse response is limited by the gate length; zero-padding does not help recover that detail.
-
-Always remember: there is no way to extract reliable information on the anechoic response below $f_1$.
+Zero-padding can make the bin spacing $\Delta f$ arbitrarily fine, but it does not increase the information contained in the gated measurement, nor does it change $f_{\min} = 1/T$. What it does provide is denser sampling of the Fourier transform of that existing time-domain segment: the transform is evaluated at more closely spaced frequencies. That denser sampling can reveal spectral detail that already lived in the gated impulse response data, but fell between the original frequency bins, so the plotted SPL curve tracks that detail more closely. It cannot, however, recover information that was not measured before the first reflection. From the usable impulse-response segment of duration $T$, the loudspeaker's frequency response below $f_{\min}$ cannot be determined.
 
 
 \section{Putting the Pieces Together: The Good, the Bad, and the Ugly}\seclabel{putting_pieces_together}
@@ -192,12 +190,12 @@ To illustrate this, let us revisit the SPL curve from \figr{FIGURE2} and examine
 \begin{figure}[tbp]
   \begin{center}
     \includegraphics[width=0.7\textwidth]{FIGURE5}
-    \caption{SPL curve determined by windowing and zero-padding the gated impulse response (\secn{putting_pieces_together}, black curve; the dashed part indicates the region not supported by data), in comparison with the gated response (same as in \figr{FIGURE2}, blue) and the anechoic reference (\mbox{\figr{FIGURE1}-B}, red).}
+    \caption{SPL curve determined by windowing and zero-padding the gated impulse response (\secn{putting_pieces_together}, black curve; the dashed part indicates frequencies not determined by the usable impulse-response segment of duration $T$), in comparison with the gated response (same as in \figr{FIGURE2}, blue) and the anechoic reference (\mbox{\figr{FIGURE1}-B}, red).}
     \figlabel{FIGURE5}
   \end{center}
 \end{figure}
 
-The processed SPL curve now extends below \SI{10}{Hz}. However, the dashed portion of the curve below $f_1 = \SI{317}{Hz}$ is a by-product of the zero-padding. These SPL values are not based on measured data and are clearly too low compared to the anechoic reference measurement. At frequencies above $f_1$, the processed SPL curve follows the anechoic reference fairly well, although it misses some of the finer details up to about \SI{3}{kHz}. This loss of detail results from the window function, which attenuates information contained in the tail of the gated impulse response. At higher frequencies, which are dominated by the early part of the impulse response, this effect becomes negligible.
+The processed SPL curve now extends below \SI{10}{Hz}. However, the dashed portion of the curve below $f_{\min} = 1/T \approx \SI{317}{Hz}$ is a by-product of zero-padding the usable segment: those values are not determined by the uncontaminated impulse response of duration $T$, because the continuation after $T$ was replaced by zeros rather than measured. They are clearly too low compared to the anechoic reference measurement. At frequencies above $f_{\min}$, the processed SPL curve follows the anechoic reference fairly well, although it misses some of the finer details up to about \SI{3}{kHz}. This loss of detail results from the window function, which attenuates information contained in the tail of the gated impulse response---an effect of time-domain windowing, not of the finer frequency-bin spacing. At higher frequencies, which are dominated by the early part of the impulse response, this effect becomes negligible.
 
 The process of deriving an anechoic SPL response from an impulse-response measurement is always a compromise between mathematical refinement and physical realism. Some operations reveal the underlying loudspeaker behaviour, while others unintentionally obscure it. No matter how attractive the final SPL curve may appear, it must always be accompanied by a clear description of the good and bad things you did to the data; otherwise, the pretty curve decays gracefully into nothing more than an ugly deception.
 
